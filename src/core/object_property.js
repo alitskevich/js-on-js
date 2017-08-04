@@ -1,12 +1,13 @@
-/**
- * Property
- */
-
 import { struct } from './_structs';
 
+/**
+ * Property descriptor for Object
+ */
 export const PROTO_PROPERTY = struct.PropertyDescriptor({
-  Getter: ($) => $.Proto,
-  Setter: ($, value) => {
+  Getter($) {
+    return $.Proto
+  },
+  Setter($, value) {
     $.Proto = value;
   },
   IsEnumerable: false,
@@ -26,12 +27,18 @@ export function LookupPropertyDescriptor($, Id) {
 
   // uses Proto chain if has no own property defined
   for (let target = $; target; target = $.Proto) if (Id in target.Meta) {
+
     return target.Meta[ Id ];
   }
 
   return undefined;
 }
 
+/**
+ * Returns existing own meta or creates a new one.
+ *
+ * @returns struct.PropertyDescriptor .
+ */
 export function EnsureOwnProperty($, Id) {
 
   if (Id in $.Meta) {

@@ -1,4 +1,4 @@
-import { INVOKE, RETURN, VAR } from '../src/core/API';
+import { INVOKE, RETURN, VAR } from '../src/core/index';
 import { FUNCTION } from '../src/core/function';
 
 function a2() {

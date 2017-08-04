@@ -1,6 +1,6 @@
 const STRING_PROTO = OBJECT({
 
-  toString: ($) => $
+  ToString: ($) => $
 
 });
 

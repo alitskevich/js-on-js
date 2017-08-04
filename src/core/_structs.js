@@ -19,8 +19,8 @@ export const struct = {
   Hash: initials => Object.assign(Object.create(null), initials),
 
   Object: define({
-    Meta: `Hash<String, PropertyDecriptor>`,
-    Data: `Hash<String, *>`,
+    Meta: `Hash<string, PropertyDescriptor>`,
+    Data: `Hash<string, *>`,
     Proto: `Object`,
     Primitive: `*`
   }),
@@ -28,15 +28,15 @@ export const struct = {
   PropertyDescriptor: define({
     Getter: `Function`,
     Setter: `Function`,
-    IsEnumerable: `Boolean`,
-    IsConfigurable: `Boolean`
+    IsEnumerable: `boolean`,
+    IsConfigurable: `boolean`
   }),
 
   Function: define({
-    Name: `String`,
-    Parameters: `[]String`,
-    LocalVariables: `[]String`,
-    Code: 'Statement',
+    Name: `string`,
+    Parameters: `[]string`,
+    LocalVariables: `[]string`,
+    Code: 'Code',
     // force `this` binding regardless passed at invocation
     BoundToThis: `*`,
     // initialized with current scope at creation
@@ -53,13 +53,14 @@ export const struct = {
     Index: `int`,
 
     Fn: `Function`,
+
     This: `*`,
     Arguments: `[]*`,
     VariableScope: `VariableScope`
   }),
 
   VariableScope: define({
-    Data: `Hash<String, Any>`,
+    Data: `Hash<string, *>`,
     Parent: `VariableScope`
   }),
 

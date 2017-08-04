@@ -37,7 +37,7 @@ export function ASSIGN(key, V) {
   THROW(ReferenceError, `variable ${Id} is not defined`);
 }
 
-export function DOT_GET($, Id) {
+export function GET($, Id) {
 
   if (!$) {
     // ($, key) => fnThrow(`Cannot read property '${key}' of undefined`, TypeError),
@@ -45,7 +45,7 @@ export function DOT_GET($, Id) {
   }
 }
 
-export function DOT_SET($, Id, Value) {
+export function SET($, Id, Value) {
 
   if (!$) {
     // ($, key, value) => fnThrow(`Cannot set property '${key}' of undefined`, TypeError),

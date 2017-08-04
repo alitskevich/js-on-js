@@ -3,7 +3,7 @@
 // ----------------------------------------------
 
 import { struct } from './_structs';
-import { APPLY } from './context';
+import { APPLY, CURRENT_SCOPE } from './context';
 import { ROOT_OBJECT } from './object_root';
 
 const FUNCTION_PROTO = struct.Object({
@@ -26,13 +26,13 @@ const FUNCTION_PROTO = struct.Object({
   })
 });
 
-export function FUNCTION(fn) {
+export function FUNCTION(fnStru) {
 
   return struct.Object({
     Meta: struct.Hash(),
     Data: struct.Hash(),
     Proto: FUNCTION_PROTO,
-    Primitive: fn
+    Primitive: fnStru
   });
 }
 

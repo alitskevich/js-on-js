@@ -8,7 +8,7 @@ const BOOLEAN_PROTO = OBJECT({
 
 });
 
-export const BooleanConstructor = FUNCTION({
+export const NewBooleanConstructor = FUNCTION({
 
   Name: 'Boolean',
 
@@ -19,3 +19,5 @@ export const BooleanConstructor = FUNCTION({
     $.Primitive = TRULY(V) ? TRUE : FALSE;
   }
 });
+
+export default NewBooleanConstructor;

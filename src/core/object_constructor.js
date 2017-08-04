@@ -2,12 +2,13 @@
  * Object Constructor
  */
 import { FUNCTION } from './function';
+import { ROOT_OBJECT } from './object_root';
 
 export const ObjectConstructor = FUNCTION({
 
   Name: 'Object',
 
-  NewPrototype: ROOT,
+  NewPrototype: ROOT_OBJECT,
 
   Code($, ...Arguments) {
     // no-op

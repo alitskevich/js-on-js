@@ -27,9 +27,6 @@ const ARRAY_PROTO = OBJECT({
 
   $Get_Length: SizeOf,
 
-  __lookupGetter: ($, Index) => TypeOf(Index) === Number ? Read($, Index) : GetProperty($, Index),
-  __lookupSetter: ($, Index) => TypeOf(Index) === Number ? Write($, Index) : SetProperty($, Index),
-
   ForEach,
 
   Reduce,
