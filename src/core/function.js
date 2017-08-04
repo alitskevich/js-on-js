@@ -2,26 +2,38 @@
 // Function
 // ----------------------------------------------
 
-import { OBJECT } from './object';
-import { struct } from '../impl';
+import { struct } from './_structs';
+import { APPLY } from './context';
+import { ROOT_OBJECT } from './object_root';
 
-const FUNCTION_PROTOTYPE = OBJECT({
+const FUNCTION_PROTO = struct.Object({
 
-  Apply: ($, This, Arguments) => FUNCTION_APPLY($.Primitive, This, Arguments),
+  Meta: struct.Hash(),
+  Proto: ROOT_OBJECT,
+  Primitive: null,
+  Data: struct.Hash({
 
-  Call: ($, This, ...Arguments) => FUNCTION_APPLY($.Primitive, This, Arguments),
+    Apply: ($, This, ...Arguments) => APPLY($.Primitive, This, Arguments),
 
-  Bind: ($, BoundToThis, ...Arguments) => FUNCTION({
+    Call: ($, This, ...Arguments) => APPLY($.Primitive, This, Arguments),
 
-    Code($this, ...args) {
+    Bind: ($, BoundToThis, ...Arguments) => FUNCTION({
 
-    }
+      Code($this, ...args) {
+
+      }
+    })
   })
 });
 
-export function FUNCTION(fn, initials = {}) {
+export function FUNCTION(fn) {
 
-  return OBJECT(initials, FUNCTION_PROTOTYPE, struct.Function(fn));
+  return struct.Object({
+    Meta: struct.Hash(),
+    Data: struct.Hash(),
+    Proto: FUNCTION_PROTO,
+    Primitive: fn
+  });
 }
 
 /**
@@ -29,19 +41,23 @@ export function FUNCTION(fn, initials = {}) {
  */
 export const FunctionConstructor = FUNCTION({
 
-  Code($, parameters, source, name) {
+  Code($, parameters, source) {
 
     $.Primitive = struct.Function({
-      Parameters: parameters || [],
-      Name: name || '',
-      // to be parent for a new variable scope in Apply()
-      LexicalScope: Context.variableScope,
-      // to be referred as prototype by each object that newly constructed with this function
-      NewPrototype: OBJECT({ Constructor: $ })
-    })
 
-    translate($.Primitive, source);
+      Parameters: parameters || [],
+
+      Name: '',
+
+      // to be parent for a new variable scope in Apply()
+      LexicalScope: CURRENT_SCOPE(),
+
+      // to be referred as prototype by each object that newly constructed with this function
+      NewPrototype: { Constructor: $ }
+    });
+
+    // translate($.Primitive, source);
   },
 
-  NewPrototype: FUNCTION_PROTOTYPE
+  NewPrototype: FUNCTION_PROTO
 });

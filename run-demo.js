@@ -7,41 +7,8 @@
 var WebpackDevServer = require('webpack-dev-server');
 var webpack = require('webpack');
 // var bodyParser = require('body-parser');
-var commons = require('./webpack.config.js');
+var config = require('./webpack.config.js');
 // var HtmlWebpackPlugin = require('html-webpack-plugin');
-
-var config = {
-  entry: {
-    index: [
-      'webpack-dev-server/client?http://localhost:8080',
-      'webpack/hot/only-dev-server',
-      'index.js'
-    ]
-    // vendor: commons.vendor
-  },
-  output: {
-    path: __dirname + '/build',
-    filename: '[name].js',
-    devtoolModuleFilenameTemplate: '[resource-path]'
-  },
-  module: {
-    rules: commons.rules
-  },
-  resolve: {
-    modules: commons.modules,
-    alias: {}
-  },
-  plugins: [
-    // new webpack.optimize.CommonsChunkPlugin({ name: 'vendor' }),
-    new webpack.HotModuleReplacementPlugin()
-    // new HtmlWebpackPlugin({
-    //   title: 'Demo',
-    //   template: 'app/index.html',
-    //   inject: 'body',
-    //   filename: 'index.html'
-    // })
-  ]
-};
 
 var compiler = webpack(config);
 

@@ -1,3 +1,6 @@
+import { OBJECT } from '../core/_structs';
+import { STRING } from '../impl/string';
+
 const MAP_PROTO = OBJECT({
 
   $Get_Size: ($) => MAP_SIZE($.Primitive),

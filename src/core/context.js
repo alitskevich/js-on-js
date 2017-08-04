@@ -2,65 +2,81 @@
 // Context
 // ----------------------------------------------
 
-import { NULL } from '../impl/_const';
-import { struct } from '../impl/structs.js';
-import { MAP } from '../impl/map';
-import { SIZE } from '../impl/alloc';
-import { FOR_EACH } from '../impl/commons';
+import { struct } from './_structs';
 
 /**
  * Context
  */
-const GLOBAL = struct.Context({
-  Next: NULL,
-  VariableScope: struct.VariableScope({ Parent: NULL, Data: MAP() })
-});
+const GLOBAL = {
 
-let Context = GLOBAL;
+  VariableScope: struct.VariableScope({ Parent: null, Data: Object.create(null) })
+};
 
-export function CURRENT_CONTEXT() {
+const STACK = [ GLOBAL ];
 
-  return Context;
+export function CURRENT_SCOPE() {
+
+  return STACK[ 0 ].VariableScope;
 }
 
-export function POP_CONTEXT() {
+export function EXIT(Result, Error) {
 
-  const context = Context.Next;
-
-  Context = context;
-
-  return context
+  Object.assign(STACK[ 0 ], { Result, Error, Index: -1 });
 }
 
-export function PUSH_CONTEXT(Fn, This, Arguments) {
-
-  let VariableScope = Context.VariableScope;
-
-  if (SIZE(Fn.Parameters) + SIZE(Fn.LocalVariables)) {
-    const Data = MAP();
-    // put parameters into scope
-    FOR_EACH(Fn.Parameters, Id => {
-      MAP_SET(Data, Id, UNDEFINED);
-    });
-    // define all variables BEFORE any execution, e.g. Hoisting
-    FOR_EACH(Fn.LocalVariables, Id => {
-      MAP_SET(Data, Id, UNDEFINED);
-    });
-    // create a new variable scope exclosed by this function lexical scope
-    VariableScope = struct.VariableScope({ Parent: Fn.LexicalScope, Data });
-  }
+export function APPLY(Fn, This = null, Arguments = []) {
 
   // create a new execution context for this invocation
-  // and push it into execution stack
   const context = struct.Context({
-    Next: Context,
+    Index: 0,
     Fn,
     This: Fn.BoundToThis || This,
     Arguments,
-    VariableScope
+    VariableScope: resolveScope(Fn, Arguments)
   });
 
-  Context = context;
+  // and push it into execution stack
+  STACK.unshift(context);
 
-  return context;
+  // Evaluate binary code
+  Fn.Code();
+
+  STACK.shift();
+
+  // to provide context.Result outside
+  return context.Result;
+}
+
+// --------
+
+export function LOOKUP_SCOPE(name) {
+
+  for (let scope = CURRENT_SCOPE(); scope; scope = scope.Parent) {
+    if (name in scope.Data) {
+      return scope;
+    }
+  }
+}
+
+// creates and pushes a new Context for given function
+function resolveScope(Fn, Arguments) {
+
+  if (Fn.Parameters.length === 0 && Fn.LocalVariables.length === 0) {
+    return CURRENT_SCOPE();
+  }
+
+  const Data = struct.Hash();
+
+  // put parameters into scope
+  Fn.Parameters.forEach((name, index) => {
+    Data[ name ] = Arguments[ index ];
+  });
+
+  // define all variables BEFORE any execution, e.g. Hoisting
+  Fn.LocalVariables.forEach((name, index) => {
+    Data[ name ] = undefined;
+  });
+
+  // create a new variable scope exclosed by this function lexical scope
+  return struct.VariableScope({ Parent: Fn.LexicalScope, Data });
 }
