@@ -35,3 +35,5 @@ export const MapConstructor = FUNCTION({
   }
 
 });
+
+// WeakMap

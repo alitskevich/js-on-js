@@ -3,7 +3,15 @@ import {
   CreatePropertyDescriptor
 } from '../index';
 import { ForEach, Find, Reduce, ensureIndex } from '../_core';
-
+// Int8Array
+// Uint8Array
+// Uint8ClampedArray
+// Int16Array
+// Uint16Array
+// Int32Array
+// Uint32Array
+// Float32Array
+// Float64Array
 const Set = ($, Index, Value) => (ensureIndex($.Data, Index)[ Index ] = Value);
 const Join = ($, sep = '') => Reduce($, (r, e) => r ? `${r}${sep}${e.ToString()}` : e.ToString());
 

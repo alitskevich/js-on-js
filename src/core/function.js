@@ -1,16 +1,21 @@
+import { struct } from './_structs';
+import { APPLY } from './context';
+import { ROOT_OBJECT } from './object_root';
+import { NULL } from './globals';
+
 // ----------------------------------------------
 // Function
 // ----------------------------------------------
 
-import { struct } from './_structs';
-import { APPLY, CURRENT_SCOPE } from './context';
-import { ROOT_OBJECT } from './object_root';
+export const FUNCTION_PROTO = struct.Object({
 
-const FUNCTION_PROTO = struct.Object({
-
-  Meta: struct.Hash(),
+  Meta: struct.Hash({
+    Length: struct.PropertyDescriptor({
+      Get: ($) => $.Primitive.Parameters.length
+    })
+  }),
   Proto: ROOT_OBJECT,
-  Primitive: null,
+  Primitive: NULL,
   Data: struct.Hash({
 
     Apply: ($, This, ...Arguments) => APPLY($.Primitive, This, Arguments),
@@ -20,44 +25,18 @@ const FUNCTION_PROTO = struct.Object({
     Bind: ($, BoundToThis, ...Arguments) => FUNCTION({
 
       Code($this, ...args) {
-
+        // todo
       }
     })
   })
 });
 
-export function FUNCTION(fnStru) {
+export function FUNCTION(fnStruct) {
 
   return struct.Object({
     Meta: struct.Hash(),
     Data: struct.Hash(),
     Proto: FUNCTION_PROTO,
-    Primitive: fnStru
+    Primitive: fnStruct
   });
 }
-
-/**
- * Function
- */
-export const FunctionConstructor = FUNCTION({
-
-  Code($, parameters, source) {
-
-    $.Primitive = struct.Function({
-
-      Parameters: parameters || [],
-
-      Name: '',
-
-      // to be parent for a new variable scope in Apply()
-      LexicalScope: CURRENT_SCOPE(),
-
-      // to be referred as prototype by each object that newly constructed with this function
-      NewPrototype: { Constructor: $ }
-    });
-
-    // translate($.Primitive, source);
-  },
-
-  NewPrototype: FUNCTION_PROTO
-});

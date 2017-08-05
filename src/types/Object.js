@@ -1,7 +1,7 @@
 /**
  * Object Constructor
  */
-import { FUNCTION } from './function';
+import { FUNCTION } from '../core/function';
 import { ROOT_OBJECT } from './object_root';
 
 export const ObjectConstructor = FUNCTION({
@@ -49,4 +49,4 @@ Object.assign(ObjectConstructor, {
 
   GetOwnKeys: ($) => [ ...$.Data.Keys() ].filter(p => p.IsEnumerable).map(p => p.Id)
 
-})
+});

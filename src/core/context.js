@@ -3,14 +3,15 @@
 // ----------------------------------------------
 
 import { struct } from './_structs';
+import { UNDEFINED } from './globals';
 
 /**
  * Context
  */
-const GLOBAL = {
+const GLOBAL = struct.Context({
 
   VariableScope: struct.VariableScope({ Parent: null, Data: Object.create(null) })
-};
+});
 
 const STACK = [ GLOBAL ];
 
@@ -51,10 +52,8 @@ export function APPLY(Fn, This = null, Arguments = []) {
 
 export function LOOKUP_SCOPE(name) {
 
-  for (let scope = CURRENT_SCOPE(); scope; scope = scope.Parent) {
-    if (name in scope.Data) {
-      return scope;
-    }
+  for (let scope = CURRENT_SCOPE(); scope; scope = scope.Parent) if (name in scope.Data) {
+    return scope;
   }
 }
 
@@ -69,14 +68,17 @@ function resolveScope(Fn, Arguments) {
 
   // put parameters into scope
   Fn.Parameters.forEach((name, index) => {
-    Data[ name ] = Arguments[ index ];
+    Data[ name ] = Arguments[ index ] || UNDEFINED;
   });
 
   // define all variables BEFORE any execution, e.g. Hoisting
   Fn.LocalVariables.forEach((name, index) => {
-    Data[ name ] = undefined;
+    Data[ name ] = UNDEFINED;
   });
 
-  // create a new variable scope exclosed by this function lexical scope
-  return struct.VariableScope({ Parent: Fn.LexicalScope, Data });
+  // create a new variable scope on the function lexical scope
+  return struct.VariableScope({
+    Parent: Fn.LexicalScope,
+    Data
+  });
 }

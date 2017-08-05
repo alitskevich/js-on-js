@@ -1,4 +1,5 @@
 import { struct } from './_structs';
+import { FALSE, TRUE } from './globals';
 
 /**
  * Property descriptor for Object
@@ -10,8 +11,8 @@ export const PROTO_PROPERTY = struct.PropertyDescriptor({
   Setter($, value) {
     $.Proto = value;
   },
-  IsEnumerable: false,
-  IsConfigurable: false
+  IsEnumerable: FALSE,
+  IsConfigurable: FALSE
 });
 
 export function DefineProperty($, Id, Prop) {
@@ -46,8 +47,8 @@ export function EnsureOwnProperty($, Id) {
   }
 
   const prop = struct.PropertyDescriptor({
-    IsEnumerable: true,
-    IsConfigurable: true
+    IsEnumerable: TRUE,
+    IsConfigurable: TRUE
   });
 
   return DefineProperty($, Id, prop)
