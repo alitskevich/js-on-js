@@ -52,8 +52,10 @@ export function APPLY(Fn, This = null, Arguments = []) {
 
 export function LOOKUP_SCOPE(name) {
 
-  for (let scope = CURRENT_SCOPE(); scope; scope = scope.Parent) if (name in scope.Data) {
-    return scope;
+  for (let scope = CURRENT_SCOPE(); scope; scope = scope.Parent) {
+    if (name in scope.Data) {
+      return scope;
+    }
   }
 }
 

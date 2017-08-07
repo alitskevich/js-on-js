@@ -9,7 +9,7 @@ export const FunctionConstructor = FUNCTION({
 
   Code($, parameters, source) {
 
-    $.Primitive = struct.Function({
+    $.Subject = struct.Function({
 
       Parameters: parameters || [],
 
@@ -22,7 +22,7 @@ export const FunctionConstructor = FUNCTION({
       NewPrototype: { Constructor: $ }
     });
 
-    // translate($.Primitive, source);
+    // translate($.Subject, source);
   },
 
   NewPrototype: FUNCTION_PROTO

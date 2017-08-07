@@ -26,7 +26,7 @@ export const ArrayConstructor = FUNCTION({
 
   Code(Constructor, args) {
 
-    $.Primitive = ALLOC(TYPE_ARRAY, args);
+    $.Subject = ALLOC(TYPE_ARRAY, args);
   },
   NewPrototype: ARRAY_PROTO
 });

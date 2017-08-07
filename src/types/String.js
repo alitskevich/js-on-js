@@ -10,6 +10,6 @@ export const StringConstructor = FUNCTION({
 
   Code($, chars) {
 
-    $.Primitive = STRING(chars);
+    $.Subject = STRING(chars);
   }
 });

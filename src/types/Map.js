@@ -3,16 +3,16 @@ import { STRING } from '../impl/string';
 
 const MAP_PROTO = OBJECT({
 
-  $Get_Size: ($) => MAP_SIZE($.Primitive),
+  $Get_Size: ($) => MAP_SIZE($.Subject),
 
   Get: ($, Key) => {
 
-    return MAP_GET($.Primitive, Key);
+    return MAP_GET($.Subject, Key);
   },
 
   Set: ($, Key, Value) => {
 
-    MAP_SET($.Primitive, Key, Value)
+    MAP_SET($.Subject, Key, Value)
 
     return $;
   },
@@ -31,7 +31,7 @@ export const MapConstructor = FUNCTION({
 
   Code($, initials) {
 
-    $.Primitive = MAP(initials);
+    $.Subject = MAP(initials);
   }
 
 });

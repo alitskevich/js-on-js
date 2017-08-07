@@ -1,6 +1,6 @@
 import assert from 'assert'
 import { APPLY } from '../../src/core/context';
-import { RETURN, VAR } from '../../src/core';
+import { RETURN, VAR } from '../../src/core/index';
 import { ASSIGN } from '../../src/core/index';
 
 describe('APPLY', () => {

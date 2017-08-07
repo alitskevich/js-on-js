@@ -3,10 +3,10 @@ import { APPLY, EXIT, LOOKUP_SCOPE } from './context';
 
 export function INVOKE(Fn, This, Arguments) {
 
-  return APPLY(Fn.Primitive, This, Arguments);
+  return APPLY(Fn.Subject, This, Arguments);
 }
 
-export function THROW(Error) {
+export function THROW(Error, type) {
 
   EXIT(null, Error);
 }
@@ -24,7 +24,7 @@ export function VAR(name) {
     return scope.Data[ name ];
   }
 
-  THROW(ReferenceError, `variable ${Id} is not defined`);
+  THROW(`variable ${Id} is not defined`, ReferenceError);
 }
 
 // SetVar method
@@ -36,7 +36,7 @@ export function ASSIGN(name, V) {
     return;
   }
 
-  THROW(ReferenceError, `variable ${Id} is not defined`);
+  THROW(`variable ${Id} is not defined`, ReferenceError);
 }
 
 export function GET($, key) {
@@ -48,15 +48,21 @@ export function GET($, key) {
   if ($ === null) {
     return THROW(`Cannot read property '${key}' of null`, TypeError);
   }
+
   return OBJECT_GET($, key)
 }
 
 export function SET($, key, value) {
 
-  if (!$) {
+  if (!$ === undefined) {
     // ($, key, value) => fnThrow(`Cannot set property '${key}' of undefined`, TypeError),
     return;
   }
+
+  if ($ === null) {
+    return THROW(`Cannot set property '${key}' of null`, TypeError);
+  }
+
   OBJECT_SET($, key, value)
 }
 

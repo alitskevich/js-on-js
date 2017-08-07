@@ -3,6 +3,7 @@
   "version": "0.0.10",
   "description": "JS written in JS",
   "devDependencies": {
+    "acorn": "^5.1.1",
     "babel-cli": "^6.18.0",
     "babel-core": "^6.24.1",
     "babel-eslint": "^6.0.4",

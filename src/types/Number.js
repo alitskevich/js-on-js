@@ -5,7 +5,7 @@ const NUMERIC_PROTO = OBJECT({
 
   ValueOf($) {
 
-    const $p = $.Primitive;
+    const $p = $.Subject;
 
     return (TYPE($p) === TYPE_NUMBER ? 1 : -1) * GET($p, 1) * Math.pow(10, GET($p, 2));
   },
@@ -22,6 +22,6 @@ export const NumericConstructor = FUNCTION({
 
     const type = sign === 1 ? TYPE_NUMBER : TYPE_NUMBER_NEGATIVE;
 
-    $.Primitive = MAKE(type, sign, fixed, exp);
+    $.Subject = MAKE(type, sign, fixed, exp);
   }
 });

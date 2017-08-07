@@ -22,7 +22,7 @@ export const struct = {
     Meta: `Hash<string, PropertyDescriptor>`,
     Data: `Hash<string, *>`,
     Proto: `Object`,
-    Primitive: `*`
+    Subject: `*`
   }),
 
   PropertyDescriptor: define({

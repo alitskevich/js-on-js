@@ -11,16 +11,19 @@ export const FUNCTION_PROTO = struct.Object({
 
   Meta: struct.Hash({
     Length: struct.PropertyDescriptor({
-      Get: ($) => $.Primitive.Parameters.length
+      Get: ($) => $.Subject.Parameters.length
     })
   }),
+
   Proto: ROOT_OBJECT,
-  Primitive: NULL,
+
+  Subject: NULL,
+
   Data: struct.Hash({
 
-    Apply: ($, This, ...Arguments) => APPLY($.Primitive, This, Arguments),
+    Apply: ($, This, ...Arguments) => APPLY($.Subject, This, Arguments),
 
-    Call: ($, This, ...Arguments) => APPLY($.Primitive, This, Arguments),
+    Call: ($, This, ...Arguments) => APPLY($.Subject, This, Arguments),
 
     Bind: ($, BoundToThis, ...Arguments) => FUNCTION({
 
@@ -34,9 +37,10 @@ export const FUNCTION_PROTO = struct.Object({
 export function FUNCTION(fnStruct) {
 
   return struct.Object({
+
     Meta: struct.Hash(),
     Data: struct.Hash(),
     Proto: FUNCTION_PROTO,
-    Primitive: fnStruct
+    Subject: fnStruct
   });
 }

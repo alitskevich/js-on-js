@@ -16,7 +16,7 @@ export const ROOT_OBJECT = struct.Object({
   Proto: NULL,
 
   // must be specified in descendants
-  Primitive: NULL,
+  Subject: NULL,
 
   // despite root itself has no proto,
   // `__Proto__` property will be useful for its descendants
@@ -28,7 +28,7 @@ export const ROOT_OBJECT = struct.Object({
     // returns underlying primitive structure
     ValueOf($) {
 
-      return $.Primitive
+      return $.Subject
     },
 
     ToString($) {
@@ -50,6 +50,7 @@ export const ROOT_OBJECT = struct.Object({
     PropertyIsEnumerable($, Id) {
 
       const prop = LookupPropertyDescriptor($, Id);
+
       return prop ? prop.IsEnumerable : TRUE;
     },
 
@@ -67,21 +68,23 @@ export const ROOT_OBJECT = struct.Object({
     __LookupGetter__($, Id) {
 
       const prop = LookupPropertyDescriptor($, Id);
+
       return prop ? prop.Getter : UNDEFINED;
     },
 
     __LookupSetter__($, Id) {
 
       const prop = LookupPropertyDescriptor($, Id);
+
       return prop ? prop.Setter : UNDEFINED;
     },
 
-    __DefineGetter__: ($, Id, fn) => {
+    __DefineGetter__($, Id, fn) {
 
       EnsureOwnProperty($, Id).Getter = fn;
     },
 
-    __DefineSetter__: ($, Id, fn) => {
+    __DefineSetter__($, Id, fn) {
 
       EnsureOwnProperty($, Id).Setter = fn;
     }

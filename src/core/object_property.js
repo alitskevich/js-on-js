@@ -1,5 +1,5 @@
 import { struct } from './_structs';
-import { FALSE, TRUE } from './globals';
+import { FALSE, TRUE, UNDEFINED } from './globals';
 
 /**
  * Property descriptor for Object
@@ -32,7 +32,7 @@ export function LookupPropertyDescriptor($, Id) {
     return target.Meta[ Id ];
   }
 
-  return undefined;
+  return UNDEFINED;
 }
 
 /**

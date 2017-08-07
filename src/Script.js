@@ -1,14 +1,13 @@
 import { GlobalContext, FunctionCreate } from './native';
+import { FUNCTION } from './core/function';
 
 export class Script {
 
-  main() {
+  main(Source, params) {
 
-    const Context = GlobalContext(this.process.stack);
+    const Fn = FUNCTION({ Source });
 
-    const Fn = FunctionCreate({ Code: this.code });
-
-    return Fn.Apply(Context, this.params);
+    return APPLY(Fn, params);
   }
 
 }

@@ -2,7 +2,7 @@ import { FALSE, TRUE, OBJECT, OBJECT_PRIMITIVE, ROOT, FUNCTION } from '../_core.
 
 const BOOLEAN_PROTO = OBJECT({
 
-  ValueOf: ($) => $.Primitive,
+  ValueOf: ($) => $.Subject,
 
   ToString: ($) => OBJECT_PRIMITIVE($) === TRUE ? 'true' : 'false'
 
@@ -16,7 +16,7 @@ export const NewBooleanConstructor = FUNCTION({
 
   Code($, V) {
 
-    $.Primitive = TRULY(V) ? TRUE : FALSE;
+    $.Subject = TRULY(V) ? TRUE : FALSE;
   }
 });
 
