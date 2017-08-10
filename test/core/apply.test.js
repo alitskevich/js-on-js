@@ -1,9 +1,9 @@
 import assert from 'assert'
-import { APPLY } from '../../src/core/context';
-import { RETURN, VAR } from '../../src/core/index';
-import { ASSIGN } from '../../src/core/index';
+import { Apply } from '../../src/core/context';
+import { RETURN, VAR } from '../../src/core/object_reflect';
+import { ASSIGN } from '../../src/core/object_reflect';
 
-describe('APPLY', () => {
+describe('Apply', () => {
 
   it('BASIC', () => {
 
@@ -16,7 +16,7 @@ describe('APPLY', () => {
       }
     };
 
-    const R = APPLY(Fn);
+    const R = Apply(Fn);
 
     assert.equal(R, 3);
   });
@@ -34,7 +34,7 @@ describe('APPLY', () => {
       }
     }
 
-    const R = APPLY(Fn, null, [ 31 ]);
+    const R = Apply(Fn, null, [ 31 ]);
 
     assert.equal(R, 31);
   });
@@ -52,7 +52,7 @@ describe('APPLY', () => {
       }
     }
 
-    const R = APPLY(Fn, null, [ 31 ]);
+    const R = Apply(Fn, null, [ 31 ]);
 
     assert.equal(R, 76);
   });

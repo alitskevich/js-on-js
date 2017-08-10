@@ -10,7 +10,8 @@
  */
 
 /**
- * The Reflect object provides the following static functions which have the same names as the proxy handler methods. Some of these methods are the same as corresponding methods on Object.
+ * The Reflect object provides the following static functions which have the same names as the proxy handler methods.
+ * Some of these methods are the same as corresponding methods on Object.
 
  Reflect.apply()
  Calls a target function with arguments as specified by the args parameter. See also Function.prototype.apply().

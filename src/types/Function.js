@@ -3,7 +3,7 @@
  */
 import { FUNCTION, FUNCTION_PROTO } from '../core/function';
 import { struct } from '../core/_structs';
-import { CURRENT_SCOPE } from '../core/context';
+import { currentScope } from '../core/context';
 
 export const FunctionConstructor = FUNCTION({
 
@@ -16,7 +16,7 @@ export const FunctionConstructor = FUNCTION({
       Name: '',
 
       // to be parent for a new variable scope in Apply()
-      LexicalScope: CURRENT_SCOPE(),
+      LexicalScope: currentScope(),
 
       // to be referred as prototype by each object that newly constructed with this function
       NewPrototype: { Constructor: $ }

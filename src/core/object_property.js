@@ -1,55 +1,67 @@
 import { struct } from './_structs';
-import { FALSE, TRUE, UNDEFINED } from './globals';
+import { FALSE, TRUE, UNDEFINED } from './_const';
 
 /**
  * Property descriptor for Object
  */
 export const PROTO_PROPERTY = struct.PropertyDescriptor({
   Getter($) {
-    return $.Proto
+    return $.Reflect.getPrototypeOf($)
   },
   Setter($, value) {
-    $.Proto = value;
+    $.Reflect.setPrototypeOf($, value);
   },
-  IsEnumerable: FALSE,
-  IsConfigurable: FALSE
+  Enumerable: FALSE,
+  Configurable: FALSE
 });
+
+export function ValueProperty(Value) {
+
+  return struct.PropertyDescriptor({
+    Value,
+    Writable: TRUE,
+    Enumerable: TRUE,
+    Configurable: TRUE
+  })
+}
+
+export function PROPERTIES(props) {
+
+  struct.Hash(Object.keys(props).reduce((r, key) => {
+
+    r[ key ] = ValueProperty(props[ key ]);
+
+    return r;
+
+  }, {}))
+}
+
+export function DefineProperties($, props) {
+
+  Object.keys(props).forEach(key => DefineProperty($, key, props[ key ]));
+
+}
 
 export function DefineProperty($, Id, Prop) {
 
   // const $prop = LookupPropertyDescriptor($, Id);
-  // assert($prop.IsConfigurable, `property '${key}' is already defined`);
+  // assert($prop.Configurable, `property '${key}' is already defined`);
   // assert((IsReadOnly === $true) && Get, `No getter allowed for read-only property '${key}'`);
 
-  return $.Meta[ Id ] = Prop;
+  return $.Props[ Id ] = struct.PropertyDescriptor(Prop);
 }
 
-export function LookupPropertyDescriptor($, Id) {
+export function LookupProperty($, Id) {
 
   // uses Proto chain if has no own property defined
-  for (let target = $; target; target = $.Proto) if (Id in target.Meta) {
+  for (let target = $; target; target = $.Proto) {
 
-    return target.Meta[ Id ];
+    if (Id in target.Props) {
+
+      return target.Props[ Id ];
+    }
   }
 
   return UNDEFINED;
 }
 
-/**
- * Returns existing own meta or creates a new one.
- *
- * @returns struct.PropertyDescriptor .
- */
-export function EnsureOwnProperty($, Id) {
-
-  if (Id in $.Meta) {
-    return $.Meta[ Id ];
-  }
-
-  const prop = struct.PropertyDescriptor({
-    IsEnumerable: TRUE,
-    IsConfigurable: TRUE
-  });
-
-  return DefineProperty($, Id, prop)
-}

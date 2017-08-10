@@ -1,6 +1,6 @@
 import { struct } from './_structs.js';
-import { LookupPropertyDescriptor, EnsureOwnProperty, PROTO_PROPERTY } from './object_property';
-import { FALSE, TRUE, UNDEFINED, NULL } from './globals';
+import { LookupProperty, PROTO_PROPERTY, DefineProperty, PROPERTIES } from './object_property';
+import { FALSE, TRUE, UNDEFINED, NULL } from './_const';
 
 /**
  * This is the default root object in a prototype tree.
@@ -15,20 +15,17 @@ export const ROOT_OBJECT = struct.Object({
   // no proto for root!
   Proto: NULL,
 
-  // must be specified in descendants
-  Subject: NULL,
-
-  // despite root itself has no proto,
-  // `__Proto__` property will be useful for its descendants
-  Meta: struct.Hash({ __Proto__: PROTO_PROPERTY }),
-
   // contains common methods, available for all descendants
-  Data: struct.Hash({
+  Props: PROPERTIES({
+
+    // despite root itself has no proto,
+    // `__Proto__` property will be useful for its descendants
+    __Proto__: PROTO_PROPERTY,
 
     // returns underlying primitive structure
     ValueOf($) {
 
-      return $.Subject
+      return $.Internal;
     },
 
     ToString($) {
@@ -36,58 +33,80 @@ export const ROOT_OBJECT = struct.Object({
       return `[object ${$.__Proto__.Constructor.Name}]`
     },
 
-    ToLocaleString() {
+    ToLocaleString($) {
 
-      return ($) => $.ToString()
+      return $.Reflect.get($, `ToString`).apply($)
     },
 
     // check if given property id is taken by data hash or meta property descriptor
-    HasOwnProperty($, Id) {
+    HasOwnProperty($, key) {
 
-      return (Id in $.Data) || (Id in $.Meta);
+      return $.Reflect.has($, key);
     },
 
-    PropertyIsEnumerable($, Id) {
+    PropertyIsEnumerable($, key) {
 
-      const prop = LookupPropertyDescriptor($, Id);
+      const prop = LookupProperty($, key);
 
-      return prop ? prop.IsEnumerable : TRUE;
+      return prop ? prop.Enumerable : FALSE;
     },
 
     IsPrototypeOf($, X) {
 
       // uses Proto chain if has no own property defined
-      for (let target = $.Proto; target; target = $.Proto) if (X === target) {
-
-        return TRUE;
+      for (let target = $.Reflect.getPrototypeOf($); target; target = $.Reflect.getPrototypeOf($)) {
+        if (X === target) {
+          return TRUE;
+        }
       }
 
       return FALSE;
     },
 
-    __LookupGetter__($, Id) {
+    __LookupGetter__($, key) {
 
-      const prop = LookupPropertyDescriptor($, Id);
+      const prop = LookupProperty($, key);
 
       return prop ? prop.Getter : UNDEFINED;
     },
 
-    __LookupSetter__($, Id) {
+    __LookupSetter__($, key) {
 
-      const prop = LookupPropertyDescriptor($, Id);
+      const prop = LookupProperty($, key);
 
       return prop ? prop.Setter : UNDEFINED;
     },
 
-    __DefineGetter__($, Id, fn) {
+    __DefineGetter__($, key, fn) {
 
-      EnsureOwnProperty($, Id).Getter = fn;
+      if (HasOwnProperty($, key)) {
+
+        $.Props[ key ].Getter = fn;
+
+      } else {
+
+        DefineProperty($, key, {
+          Getter: fn,
+          IsEnumerable: TRUE,
+          IsConfigurable: TRUE
+        })
+      }
     },
 
-    __DefineSetter__($, Id, fn) {
+    __DefineSetter__($, key, fn) {
 
-      EnsureOwnProperty($, Id).Setter = fn;
+      if (HasOwnProperty($, key)) {
+
+        $.Props[ key ].Setter = fn;
+
+      } else {
+
+        DefineProperty($, key, {
+          Setter: fn,
+          IsEnumerable: TRUE,
+          IsConfigurable: TRUE
+        })
+      }
     }
-
   })
 });

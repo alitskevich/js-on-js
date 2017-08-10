@@ -1,3 +1,7 @@
+import { ASSIGN } from '../core/object_reflect';
+import { FUNCTION } from '../core/function';
+import { Apply } from '../core/context';
+
 const acorn = require("acorn")
 const walk = require("acorn/dist/walk")
 
@@ -13,7 +17,7 @@ export function translate(Source, Fn) {
 
   var LocalVariables = [];
   let Parameters = [];
-  let Code = () => 1;
+  let Statements = [];
 
   var ast = typeof Source === 'object' ? Source : acorn.parse(Source, {
     // collect ranges for each node
@@ -23,13 +27,26 @@ export function translate(Source, Fn) {
     // collect token ranges
     // onToken: tokens
   });
-
+  console.log(ast)
   walk.recursive(ast, {}, {
+    VariableDeclarator(n) {
+      const name = n.id.name;
+      LocalVariables.push(name);
+    },
     FunctionDeclaration(n, state, c) {
-      LocalVariables.push(n.id)
-      console.log(`Found a literal: `, n)
+      const name = n.id.name;
+      LocalVariables.push(name);
+      const fn = FUNCTION({
+        Name: name
+      });
+      translate(n.body, fn);
+      Statements.push(() => ASSIGN(name, fn));
     }
   });
+
+  const Code = () => {
+    Statements.forEach(st => st.apply())
+  }
 
   return Object.assign(Fn, { LocalVariables, Parameters, Code });
 }

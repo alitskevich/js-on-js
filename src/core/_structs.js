@@ -2,14 +2,15 @@
  * Structures
  */
 
-function define(fields) {
+function define(fields, type) {
 
   const keys = Object.keys(fields);
 
-  return (defs) => keys.reduce((r, key) => {
-    r[ key ] = defs[ key ];
-    return r;
-  }, Object.create(null));
+  return (defs) => Object.preventExtensions(
+    keys.reduce((r, key) => {
+      r[ key ] = defs[ key ];
+      return r;
+    }, Object.assign(Object.create(null), { $$type: type })));
 }
 
 export const struct = {
@@ -19,20 +20,56 @@ export const struct = {
   Hash: initials => Object.assign(Object.create(null), initials),
 
   Object: define({
-    Meta: `Hash<string, PropertyDescriptor>`,
-    Data: `Hash<string, *>`,
+    Props: `Hash<string, PropertyDescriptor>`,
     Proto: `Object`,
-    Subject: `*`
+    Reflect: `Reflect`,
+    Extensible: `boolean`,
+    Internal: `*`
+  }),
+
+  Reflect: define({
+
+    apply: `Function`,
+    construct: `Function`,
+
+    defineProperty: `Function`,
+    has: `Function`,
+    ownKeys: `Function`,
+    getOwnPropertyDescriptor: `Function`,
+    deleteProperty: `Function`,
+
+    get: `Function`,
+    set: `Function`,
+
+    getPrototypeOf: `Function`,
+    setPrototypeOf: `Function`,
+
+    isExtensible: `Function`,
+    preventExtensions: `Function`
+
   }),
 
   PropertyDescriptor: define({
+
+    // for accessor property:
     Getter: `Function`,
     Setter: `Function`,
-    IsEnumerable: `boolean`,
-    IsConfigurable: `boolean`
+
+    // for data property:
+    Value: `*`,
+    Writable: `boolean`,
+
+    // commons:
+    Enumerable: `boolean`,
+    Configurable: `boolean`
+  }),
+
+  Code: define({
+    Steps: '[]Native'
   }),
 
   Function: define({
+
     Name: `string`,
     Parameters: `[]string`,
     LocalVariables: `[]string`,
@@ -49,19 +86,20 @@ export const struct = {
   Context: define({
     // execution flow
     Result: `*`,
-    Exit: `*`,
+    ExitMode: `string`,
     Index: `int`,
 
     Fn: `Function`,
 
+    // state
     This: `*`,
     Arguments: `[]*`,
-    VariableScope: `VariableScope`
+    Scope: `VariableScope`
   }),
 
   VariableScope: define({
-    Data: `Hash<string, *>`,
-    Parent: `VariableScope`
+    Vars: `Hash<string, *>`,
+    Outer: `VariableScope`
   }),
 
 };

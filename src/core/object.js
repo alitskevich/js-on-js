@@ -1,69 +1,19 @@
 import { struct } from './_structs';
 import { ROOT_OBJECT } from './object_root';
-import { LookupPropertyDescriptor, PROTO_PROPERTY } from './object_property';
-import { UNDEFINED } from './globals';
+import { PROPERTIES, PROTO_PROPERTY } from './object_property';
+import { ORDINARY_OBJECT_REFLECT } from './object_reflect';
 
 /**
  * Object
  */
-export function OBJECT(initials, proto = ROOT_OBJECT, primitive) {
+export function OBJECT(initials, Proto = ROOT_OBJECT, Internal, Reflect = ORDINARY_OBJECT_REFLECT) {
 
-  return struct.Object({
+  const Props = PROPERTIES(initials);
 
-    Meta: struct.Hash(proto && proto !== ROOT_OBJECT ? { __Proto__: PROTO_PROPERTY } : {}),
+  if (Proto && Proto !== ROOT_OBJECT) {
 
-    Data: struct.Hash(initials),
-
-    Proto: proto,
-
-    Subject: primitive
-  });
-}
-
-export function OBJECT_GET($, key) {
-
-  const prop = LookupPropertyDescriptor($, key);
-
-  if (prop) {
-
-    if (prop.Value) {
-
-      return prop.Value;
-    }
-
-    if (prop.Getter) {
-
-      return prop.Getter($);
-    }
-
-    // throw
+    Props.__Proto__ = PROTO_PROPERTY;
   }
 
-  for (let target = $; target; target = target.Proto) {
-    if (key in target.Data) {
-      return target.Data[ key ];
-    }
-  }
-
-  return UNDEFINED;
+  return struct.Object({ Props, Proto, Reflect, Internal });
 }
-
-export function OBJECT_SET($, key, value) {
-
-  const prop = LookupPropertyDescriptor($, key);
-
-  if (prop) {
-
-    if (prop.Setter) {
-      prop.Setter($, key, value);
-    } else {
-      // assert(prop.IsReadOnly, `property '${key}' is read only`);
-    }
-
-  } else {
-
-    $.Data[ key ] = value;
-  }
-
-}
-

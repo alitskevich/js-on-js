@@ -47,6 +47,6 @@ Object.assign(ObjectConstructor, {
     return [ ...preceding, ...own ];
   },
 
-  GetOwnKeys: ($) => [ ...$.Data.Keys() ].filter(p => p.IsEnumerable).map(p => p.Id)
+  GetOwnKeys: ($) => [ ...$.Data.Keys() ].filter(p => p.Enumerable).map(p => p.Id)
 
 });

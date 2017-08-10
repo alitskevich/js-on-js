@@ -3,29 +3,24 @@
 // ----------------------------------------------
 
 import { struct } from './_structs';
-import { UNDEFINED } from './globals';
+import { UNDEFINED } from './_const';
 
 /**
  * Context
  */
 const GLOBAL = struct.Context({
 
-  VariableScope: struct.VariableScope({ Parent: null, Data: Object.create(null) })
+  Scope: struct.VariableScope({ Vars: struct.Hash() })
 });
 
 const STACK = [ GLOBAL ];
 
-export function CURRENT_SCOPE() {
-
-  return STACK[ 0 ].VariableScope;
-}
-
-export function EXIT(Result, Error) {
+export function Exit(Result, Error) {
 
   Object.assign(STACK[ 0 ], { Result, Error, Index: -1 });
 }
 
-export function APPLY(Fn, This = null, Arguments = []) {
+export function Apply(Fn, This = null, Arguments = []) {
 
   // create a new execution context for this invocation
   const context = struct.Context({
@@ -33,7 +28,7 @@ export function APPLY(Fn, This = null, Arguments = []) {
     Fn,
     This: Fn.BoundToThis || This,
     Arguments,
-    VariableScope: resolveScope(Fn, Arguments)
+    Scope: resolveScope(Fn, Arguments)
   });
 
   // and push it into execution stack
@@ -50,10 +45,15 @@ export function APPLY(Fn, This = null, Arguments = []) {
 
 // --------
 
-export function LOOKUP_SCOPE(name) {
+export function currentScope() {
 
-  for (let scope = CURRENT_SCOPE(); scope; scope = scope.Parent) {
-    if (name in scope.Data) {
+  return STACK[ 0 ].Scope;
+}
+
+export function lookupScope(name) {
+
+  for (let scope = currentScope(); scope; scope = scope.Outer) {
+    if (name in scope.Vars) {
       return scope;
     }
   }
@@ -63,24 +63,24 @@ export function LOOKUP_SCOPE(name) {
 function resolveScope(Fn, Arguments) {
 
   if (Fn.Parameters.length === 0 && Fn.LocalVariables.length === 0) {
-    return CURRENT_SCOPE();
+    return currentScope();
   }
 
-  const Data = struct.Hash();
+  const Vars = struct.Hash();
 
   // put parameters into scope
   Fn.Parameters.forEach((name, index) => {
-    Data[ name ] = Arguments[ index ] || UNDEFINED;
+    Vars[ name ] = Arguments[ index ] || UNDEFINED;
   });
 
   // define all variables BEFORE any execution, e.g. Hoisting
   Fn.LocalVariables.forEach((name, index) => {
-    Data[ name ] = UNDEFINED;
+    Vars[ name ] = UNDEFINED;
   });
 
   // create a new variable scope on the function lexical scope
   return struct.VariableScope({
-    Parent: Fn.LexicalScope,
-    Data
+    Outer: Fn.LexicalScope,
+    Vars
   });
 }

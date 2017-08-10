@@ -1,46 +1,51 @@
 import { struct } from './_structs';
-import { APPLY } from './context';
-import { ROOT_OBJECT } from './object_root';
-import { NULL } from './globals';
+import { Apply } from './context';
+import { OBJECT } from './object';
+import { ORDINARY_OBJECT_REFLECT } from './object_reflect';
 
 // ----------------------------------------------
 // Function
 // ----------------------------------------------
 
-export const FUNCTION_PROTO = struct.Object({
+export const FUNCTION_PROTO = OBJECT({
 
-  Meta: struct.Hash({
-    Length: struct.PropertyDescriptor({
-      Get: ($) => $.Subject.Parameters.length
-    })
+  Length: struct.PropertyDescriptor({
+    Get: ($) => $.Internal.Parameters.length
   }),
 
-  Proto: ROOT_OBJECT,
+  Apply: ($, This, Arguments) => Apply($.Internal, This, Arguments),
 
-  Subject: NULL,
+  Call: ($, This, ...Arguments) => Apply($.Internal, This, Arguments),
 
-  Data: struct.Hash({
+  Bind: ($, BoundToThis, ...Arguments) => FUNCTION({
 
-    Apply: ($, This, ...Arguments) => APPLY($.Subject, This, Arguments),
-
-    Call: ($, This, ...Arguments) => APPLY($.Subject, This, Arguments),
-
-    Bind: ($, BoundToThis, ...Arguments) => FUNCTION({
-
-      Code($this, ...args) {
-        // todo
-      }
-    })
+    Code($this, ...args) {
+      // todo
+    }
   })
 });
 
-export function FUNCTION(fnStruct) {
+const FUNCTION_REFLECT = {
 
-  return struct.Object({
+  ...ORDINARY_OBJECT_REFLECT,
 
-    Meta: struct.Hash(),
-    Data: struct.Hash(),
-    Proto: FUNCTION_PROTO,
-    Subject: fnStruct
-  });
+  apply(Fn, This, Arguments) {
+
+    return Apply(Fn.Internal, This, Arguments);
+  },
+
+  construct($, ...args) {
+
+    const $new = OBJECT({}, $.Internal.NewPrototype);
+
+    Apply($.Internal, $new, args);
+
+    return $new;
+  },
+
+};
+
+export function FUNCTION(fn) {
+
+  return OBJECT({}, FUNCTION_PROTO, struct.Function(fn), FUNCTION_REFLECT);
 }

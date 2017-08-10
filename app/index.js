@@ -1,4 +1,4 @@
-import { INVOKE, RETURN, VAR } from '../src/core/index';
+import { INVOKE, RETURN, VAR } from '../src/core/object_reflect';
 import { FUNCTION } from '../src/core/function';
 import Source from 'html-loader!../samples/hello.js';
 import { translate } from '../src/translate/index';

@@ -1,12 +1,14 @@
 var prefix = "Hi";
 
-var User = function (name) {
+function User(name) {
 
   this.name = name;
 
   this.greeting = function () {
-    return prefix + ', ' + this.name
+
+    return [ prefix, this.name ].join(', ')
   };
+
 }
 
 var user = new User('John');
