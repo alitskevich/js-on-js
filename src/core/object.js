@@ -17,3 +17,5 @@ export function OBJECT(initials, Proto = ROOT_OBJECT, Internal, Reflect = ORDINA
 
   return struct.Object({ Props, Proto, Reflect, Internal });
 }
+
+

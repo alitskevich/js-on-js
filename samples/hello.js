@@ -2,7 +2,7 @@ var prefix = "Hi";
 
 function User(name) {
 
-  this.name = name;
+  this.name.en = encode(name);
 
   this.greeting = function () {
 

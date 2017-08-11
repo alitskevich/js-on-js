@@ -1,7 +1,6 @@
-import { INVOKE, RETURN, VAR } from '../src/core/object_reflect';
-import { FUNCTION } from '../src/core/function';
 import Source from 'html-loader!../samples/hello.js';
 import { translate } from '../src/translate/index';
+import { INVOKE, FUNCTION } from '../src/core/API';
 
 function a2() {
 
@@ -11,7 +10,7 @@ function a2() {
     Name: 'test'
   });
 
-  translate(Source, Fn.Subject);
+  translate(Source, Fn.Internal);
 
   return INVOKE(Fn, null, [ 1 ]);
 

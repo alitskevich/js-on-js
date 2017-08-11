@@ -1,4 +1,17 @@
-import { UNDEFINED } from './_const';
+import { NULL, UNDEFINED } from './_const';
+import { Exit, lookupScope } from './context';
+
+export { FUNCTION } from './function';
+export { OBJECT } from './object';
+
+export function TO_OBJECT($) {
+
+  if ($ === UNDEFINED || $ === NULL) {
+    return THROW(`Cannot convert undefined or null to object`, TypeError);
+  }
+
+  return $;
+}
 
 export function THROW(Error, type) {
 
@@ -44,6 +57,9 @@ export function GET($, key) {
   }
 
   return $.Reflect.get($, key)
+}
+
+export function DEL($, key) {
 }
 
 export function SET($, key, value) {

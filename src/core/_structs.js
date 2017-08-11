@@ -64,22 +64,18 @@ export const struct = {
     Configurable: `boolean`
   }),
 
-  Code: define({
-    Steps: '[]Native'
-  }),
-
   Function: define({
 
     Name: `string`,
     Parameters: `[]string`,
     LocalVariables: `[]string`,
-    Code: 'Code',
+    Code: 'native',
     // force `this` binding regardless passed at invocation
     BoundToThis: `*`,
     // initialized with current scope at creation
     // to be parent for a new variable scope in Apply()
-    LexicalScope: `VariableScope`,
     // prototype instance that used to create an object with `new F()`
+    LexicalScope: `VariableScope`,
     NewPrototype: `Object`
   }),
 

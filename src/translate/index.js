@@ -1,9 +1,23 @@
-import { ASSIGN } from '../core/object_reflect';
-import { FUNCTION } from '../core/function';
-import { Apply } from '../core/context';
+import { ASSIGN, FUNCTION } from '../core/API';
 
 const acorn = require("acorn")
-const walk = require("acorn/dist/walk")
+const walk = require("acorn/dist/walk");
+
+/**
+ * parse source into AST
+ * @param Source
+ * @param Fn
+ */
+export function parse(Source) {
+  return typeof Source === 'object' ? Source : acorn.parse(Source, {
+    // collect ranges for each node
+    // ranges: true,
+    // collect comments in Esprima's format
+    // onComment: comments,
+    // collect token ranges
+    // onToken: tokens
+  });
+}
 
 /**
  *
@@ -19,15 +33,9 @@ export function translate(Source, Fn) {
   let Parameters = [];
   let Statements = [];
 
-  var ast = typeof Source === 'object' ? Source : acorn.parse(Source, {
-    // collect ranges for each node
-    // ranges: true,
-    // collect comments in Esprima's format
-    // onComment: comments,
-    // collect token ranges
-    // onToken: tokens
-  });
-  console.log(ast)
+  var ast = parse(Source);
+
+
   walk.recursive(ast, {}, {
     VariableDeclarator(n) {
       const name = n.id.name;
@@ -39,8 +47,24 @@ export function translate(Source, Fn) {
       const fn = FUNCTION({
         Name: name
       });
-      translate(n.body, fn);
+      translate(n.body, fn.Internal);
       Statements.push(() => ASSIGN(name, fn));
+      c(n.body, state);
+    },
+    AssignmentExpression(n, state, c) {
+
+      // Statements.push(() => ASSIGN(name, fn));
+      c(n.left, state);
+    },
+    MemberExpression(n, state, c) {
+      console.log(n)
+      //Statements.push(() => ASSIGN(name, fn));
+      c(n.object, state);
+    },
+    CallExpression(n, state, c) {
+      console.log(n)
+      //Statements.push(() => ASSIGN(name, fn));
+      c(n, state);
     }
   });
 

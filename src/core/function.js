@@ -1,7 +1,6 @@
 import { struct } from './_structs';
 import { Apply } from './context';
 import { OBJECT } from './object';
-import { ORDINARY_OBJECT_REFLECT } from './object_reflect';
 
 // ----------------------------------------------
 // Function
@@ -25,27 +24,7 @@ export const FUNCTION_PROTO = OBJECT({
   })
 });
 
-const FUNCTION_REFLECT = {
-
-  ...ORDINARY_OBJECT_REFLECT,
-
-  apply(Fn, This, Arguments) {
-
-    return Apply(Fn.Internal, This, Arguments);
-  },
-
-  construct($, ...args) {
-
-    const $new = OBJECT({}, $.Internal.NewPrototype);
-
-    Apply($.Internal, $new, args);
-
-    return $new;
-  },
-
-};
-
 export function FUNCTION(fn) {
 
-  return OBJECT({}, FUNCTION_PROTO, struct.Function(fn), FUNCTION_REFLECT);
+  return OBJECT({}, FUNCTION_PROTO, struct.Function(fn));
 }

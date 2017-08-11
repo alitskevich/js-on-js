@@ -27,7 +27,7 @@ export function ValueProperty(Value) {
 
 export function PROPERTIES(props) {
 
-  struct.Hash(Object.keys(props).reduce((r, key) => {
+  return struct.Hash(Object.keys(props).reduce((r, key) => {
 
     r[ key ] = ValueProperty(props[ key ]);
 
