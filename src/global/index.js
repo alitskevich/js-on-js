@@ -1,7 +1,12 @@
 import { FALSE } from '../core/_const';
 import { OBJECT } from '../core/object';
 
-export const _Global = OBJECT({
+import Atomics from './Atomics';
+import JSON from './JSON';
+import Math from './Math';
+import Reflect from './Reflect';
+
+export default OBJECT({
 
   // Non-equal to anything including itself
   NaN: {
@@ -93,15 +98,9 @@ export const _Global = OBJECT({
 // 34 WeakSet 
 
 // Other:
-//   Atomics
-//   See 24.4.
-//
-// 18.4.2JSON
-// See 24.5.
-//
-// 18.4.3Math
-// See 20.2.
-//
-// 18.4.4Reflect
+  Atomics,
+  JSON,
+  Math,
+  Reflect
 
 });

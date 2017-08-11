@@ -1,5 +1,5 @@
 /**
- * This file contains subset of JS syntax that is minimal, but enough.
+ * This file contains minimal, but enough subset of JS syntax.
  *
  * By the way, This is block comment.
  */
@@ -42,11 +42,11 @@ export function NamedFunction(parameter1, parameter2 = 'defaultValue') {
   // Conditional
   if (someConditionExpression) {
 
-    thenStatementsHere(CONSTANT_123);
+    thenStatementsHere();
 
   } else {
 
-    otherwise(ARROW_FUNCTION);
+    otherwise();
   }
 
   let count = 100;

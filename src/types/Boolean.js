@@ -19,5 +19,3 @@ export const NewBooleanConstructor = FUNCTION({
     $.Subject = TRULY(V) ? TRUE : FALSE;
   }
 });
-
-export default NewBooleanConstructor;

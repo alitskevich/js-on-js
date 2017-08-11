@@ -90,12 +90,21 @@ export const struct = {
     // state
     This: `*`,
     Arguments: `[]*`,
-    Scope: `VariableScope`
+    Scope: `VariableScope`,
+    Realm: `Realm`
   }),
 
   VariableScope: define({
     Vars: `Hash<string, *>`,
     Outer: `VariableScope`
+  }),
+
+  Realm: define({
+    Intrinsics: `Hash<string, Function>`,
+    Global: `Object`,
+    GlobalContext: `Context`,
+    TemplateMap: `*`,
+    HostDefined: `*`,
   }),
 
 };

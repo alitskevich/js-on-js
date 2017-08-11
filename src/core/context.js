@@ -4,16 +4,13 @@
 
 import { struct } from './_structs';
 import { UNDEFINED } from './_const';
+import { Realm } from './realm';
 
 /**
  * Context
  */
-const GLOBAL = struct.Context({
 
-  Scope: struct.VariableScope({ Vars: struct.Hash() })
-});
-
-const STACK = [ GLOBAL ];
+const STACK = [ Realm.GlobalContext ];
 
 export function Exit(Result, Error) {
 
@@ -28,7 +25,8 @@ export function Apply(Fn, This = null, Arguments = []) {
     Fn,
     This: Fn.BoundToThis || This,
     Arguments,
-    Scope: resolveScope(Fn, Arguments)
+    Scope: resolveScope(Fn, Arguments),
+    Realm
   });
 
   // and push it into execution stack

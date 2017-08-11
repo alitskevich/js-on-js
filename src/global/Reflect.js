@@ -6,4 +6,4 @@ import { OBJECT } from '../core/object';
  * The methods are the same as those of proxy handlers.
  * Reflect is not a function object, so it's not constructible.
  */
-Global.Reflect = OBJECT(ORDINARY_OBJECT_REFLECT);
+export default OBJECT(ORDINARY_OBJECT_REFLECT);

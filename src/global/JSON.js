@@ -56,7 +56,7 @@ export const GRAMMAR = ` JSON = null
  ArrayElements = JSON
  or ArrayElements , JSON`;
 
-export default window.JSON || {
+export default {
 
   parse: function (sJSON) {
     return eval('(' + sJSON + ')');
