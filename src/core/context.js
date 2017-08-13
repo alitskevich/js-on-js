@@ -4,17 +4,37 @@
 
 import { struct } from './_structs';
 import { UNDEFINED } from './_const';
-import { Realm } from './realm';
 
 /**
  * Context
  */
 
-const STACK = [ Realm.GlobalContext ];
+const STACK = [];
 
-export function Exit(Result, Error) {
+export function InitGlobalContext(GlobalObject, Realm) {
+
+  const GlobalContext = struct.Context({
+
+    Scope: struct.VariableScope({ Vars: struct.Hash(GlobalObject) }),
+
+    Realm
+  });
+
+  Realm.GlobalObject = GlobalObject;
+
+  Realm.GlobalContext = GlobalContext;
+
+  STACK.unshift(GlobalContext);
+}
+
+export function Return(Result = UNDEFINED, Error = UNDEFINED) {
 
   Object.assign(STACK[ 0 ], { Result, Error, Index: -1 });
+}
+
+export function Throw(Error, type) {
+
+  Return(UNDEFINED, Error);
 }
 
 export function Apply(Fn, This = null, Arguments = []) {
@@ -26,7 +46,7 @@ export function Apply(Fn, This = null, Arguments = []) {
     This: Fn.BoundToThis || This,
     Arguments,
     Scope: resolveScope(Fn, Arguments),
-    Realm
+    Realm: STACK[ 0 ].Realm
   });
 
   // and push it into execution stack
@@ -41,14 +61,16 @@ export function Apply(Fn, This = null, Arguments = []) {
   return context.Result;
 }
 
-// --------
+/**
+ * Variable Scope
+ */
 
 export function currentScope() {
 
   return STACK[ 0 ].Scope;
 }
 
-export function lookupScope(name) {
+function lookupScope(name) {
 
   for (let scope = currentScope(); scope; scope = scope.Outer) {
     if (name in scope.Vars) {
@@ -81,4 +103,31 @@ function resolveScope(Fn, Arguments) {
     Outer: Fn.LexicalScope,
     Vars
   });
+}
+
+/**
+ * Get/Set Variables
+ */
+
+// GetVar method
+export function GetVar(name) {
+
+  const scope = lookupScope(name);
+  if (scope) {
+    return scope.Vars[ name ];
+  }
+
+  Throw(`variable ${name} is not defined`, ReferenceError);
+}
+
+// SetVar method
+export function AssignVar(name, V) {
+
+  const scope = lookupScope(name);
+  if (scope) {
+    scope.Vars[ name ] = V;
+    return;
+  }
+
+  Throw(`variable ${Id} is not defined`, ReferenceError);
 }

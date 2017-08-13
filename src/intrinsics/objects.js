@@ -1,19 +1,24 @@
 /**
  * Object Constructor
  */
-import { FUNCTION } from '../core/function';
-import { ROOT_OBJECT } from './object_root';
+import { ROOT } from './object_root';
+import { FUNCTION } from './function';
 
-export const ObjectConstructor = FUNCTION({
+export const ObjectPrototype = ROOT;
 
-  Name: 'Object',
+/**
+ *
+ *
+ * @see https://github.com/GoogleChrome/proxy-polyfill/blob/master/proxy.js
+ */
+export const ProxyConstructor = ($, handler, target) => {
 
-  NewPrototype: ROOT_OBJECT,
+  $.Reflect = handler;
+}
 
-  Code($, ...Arguments) {
-    // no-op
-  }
-});
+export const ObjectConstructor = ($, ...Arguments) => {
+  // no-op
+};
 
 Object.assign(ObjectConstructor, {
 

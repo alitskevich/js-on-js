@@ -1,4 +1,4 @@
-import { ASSIGN, FUNCTION } from '../core/API';
+import API from './termins';
 
 const acorn = require("acorn")
 const walk = require("acorn/dist/walk");
@@ -44,26 +44,26 @@ export function translate(Source, Fn) {
     FunctionDeclaration(n, state, c) {
       const name = n.id.name;
       LocalVariables.push(name);
-      const fn = FUNCTION({
+      const fn = API.FUNCTION({
         Name: name
       });
       translate(n.body, fn.Internal);
-      Statements.push(() => ASSIGN(name, fn));
+      Statements.push(() => API.ASSIGN_VAR(name, fn));
       c(n.body, state);
     },
     AssignmentExpression(n, state, c) {
 
-      // Statements.push(() => ASSIGN(name, fn));
+      // Statements.push(() => API.ASSIGN(name, fn));
       c(n.left, state);
     },
     MemberExpression(n, state, c) {
       console.log(n)
-      //Statements.push(() => ASSIGN(name, fn));
+      //Statements.push(() => API.ASSIGN(name, fn));
       c(n.object, state);
     },
     CallExpression(n, state, c) {
       console.log(n)
-      //Statements.push(() => ASSIGN(name, fn));
+      //Statements.push(() => API.ASSIGN(name, fn));
       c(n, state);
     }
   });

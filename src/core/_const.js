@@ -1,7 +1,7 @@
 // UNCERTAIN - ANYTHING POSSIBLE
 export const UNDEFINED = -1;
 
-// CERTAIN - NOTHING GAIN
+// CERTAINLY NOTHING
 export const NULL = -2;
 
 // Positive dual choice

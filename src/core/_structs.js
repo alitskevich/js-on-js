@@ -27,6 +27,11 @@ export const struct = {
     Internal: `*`
   }),
 
+  Array: define({
+    Items: `Hash<string, *>`,
+    Length: `int`
+  }),
+
   Reflect: define({
 
     apply: `Function`,
@@ -101,7 +106,7 @@ export const struct = {
 
   Realm: define({
     Intrinsics: `Hash<string, Function>`,
-    Global: `Object`,
+    GlobalObject: `Object`,
     GlobalContext: `Context`,
     TemplateMap: `*`,
     HostDefined: `*`,

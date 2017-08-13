@@ -10,7 +10,7 @@ import { FALSE, TRUE, UNDEFINED, NULL } from './_const';
  *  obj.__proto__
  * '''
  */
-export const ROOT_OBJECT = struct.Object({
+export const ROOT = {
 
   // no proto for root!
   Proto: NULL,
@@ -109,4 +109,6 @@ export const ROOT_OBJECT = struct.Object({
       }
     }
   })
-});
+};
+
+export const ROOT_OBJECT = struct.Object(ROOT)

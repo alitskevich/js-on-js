@@ -3,16 +3,16 @@ import { STRING } from '../impl/string';
 
 const MAP_PROTO = OBJECT({
 
-  $Get_Size: ($) => MAP_SIZE($.Subject),
+  $Get_Size: ($) => MAP_SIZE($.Internal),
 
   Get: ($, Key) => {
 
-    return MAP_GET($.Subject, Key);
+    return MAP_GET($.Internal, Key);
   },
 
   Set: ($, Key, Value) => {
 
-    MAP_SET($.Subject, Key, Value)
+    MAP_SET($.Internal, Key, Value)
 
     return $;
   },
@@ -31,9 +31,12 @@ export const MapConstructor = FUNCTION({
 
   Code($, initials) {
 
-    $.Subject = MAP(initials);
+    $.Internal = MAP(initials);
   }
 
 });
 
 // WeakMap
+export default Set;
+
+// WeakSet

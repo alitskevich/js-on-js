@@ -2,8 +2,14 @@ import { struct } from './_structs';
 import { LookupProperty, ValueProperty } from './object_property';
 import { FALSE, UNDEFINED } from './_const';
 import { Apply } from './context';
+import { OBJECT } from './object';
 
-export const ORDINARY_OBJECT_REFLECT = struct.Reflect({
+/**
+ * Reflect is a built-in object that provides methods for interceptable JavaScript operations.
+ * The methods are the same as those of proxy handlers.
+ * Reflect is not a function object, so it's not constructible.
+ */
+export const REFLECT = {
 
   /**
    *  Calls a target function with arguments as specified by the args parameter.
@@ -33,6 +39,12 @@ export const ORDINARY_OBJECT_REFLECT = struct.Reflect({
     return $new;
   },
 
+  /**
+   * Similar to Object.defineProperty(). Returns a Boolean.
+   * @param $
+   * @param key
+   * @param prop
+   */
   defineProperty($, key, prop) {
 
     $.Props[ key ] = prop
@@ -49,11 +61,22 @@ export const ORDINARY_OBJECT_REFLECT = struct.Reflect({
     return LookupProperty($, key) !== UNDEFINED;
   },
 
+  /**
+   * Returns an array of the target object's own (not inherited) property keys.
+   * @param $
+   * @returns {Array}
+   */
   ownKeys($) {
 
     return Object.keys($.Props)
   },
-
+  /**
+   *  Similar to Object.getOwnPropertyDescriptor().
+   *  Returns a property descriptor of the given property if it exists on the object, undefined otherwise.
+   * @param $
+   * @param key
+   * @returns {*}
+   */
   getOwnPropertyDescriptor($, key) {
 
     return $.Props[ key ]
@@ -123,6 +146,11 @@ export const ORDINARY_OBJECT_REFLECT = struct.Reflect({
     return $.Proto
   },
 
+  /**
+   *  A function that sets the prototype of an object.
+   * @param $
+   * @param value
+   */
   setPrototypeOf($, value) {
 
     $.Proto = value;
@@ -138,31 +166,19 @@ export const ORDINARY_OBJECT_REFLECT = struct.Reflect({
     return $.Extensible
   },
 
+  /**
+   *  Similar to Object.preventExtensions(). Returns a Boolean.
+   * @param $
+   */
   preventExtensions($) {
 
     $.Extensible = FALSE;
   }
-});
+};
 
 /**
  * The Reflect object provides the following static functions which have the same names as the proxy handler methods.
  * Some of these methods are the same as corresponding methods on Object.
-
- Reflect.defineProperty()
- Similar to Object.defineProperty(). Returns a Boolean.
- Reflect.deleteProperty()
- Reflect.get()
-
- Reflect.getOwnPropertyDescriptor()
- Similar to Object.getOwnPropertyDescriptor(). Returns a property descriptor of the given property if it exists on the object,  undefined otherwise.
- Reflect.getPrototypeOf()
- Same as Object.getPrototypeOf().
- Reflect.has()
- Reflect.isExtensible()
- Reflect.ownKeys()
- Returns an array of the target object's own (not inherited) property keys.
- Reflect.preventExtensions()
- Similar to Object.preventExtensions(). Returns a Boolean.
- Reflect.setPrototypeOf()
- A function that sets the prototype of an object.
  */
+export const ORDINARY_OBJECT_REFLECT = struct.Reflect(REFLECT);
+

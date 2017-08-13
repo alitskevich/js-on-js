@@ -1,6 +1,6 @@
 import Source from 'html-loader!../samples/hello.js';
 import { translate } from '../src/translate/index';
-import { INVOKE, FUNCTION } from '../src/core/API';
+import { INVOKE, FUNCTION } from '../src/translate/termins';
 
 function a2() {
 
