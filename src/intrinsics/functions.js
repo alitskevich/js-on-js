@@ -1,9 +1,8 @@
 /**
  * Function
  */
-import { FUNCTION, FUNCTION_PROTO } from '../core/function';
-import { struct } from '../core/_structs';
-import { currentScope } from '../core/context';
+import { FUNCTION, FUNCTION_PROTO, FUNCTION_STRUCT } from '../core/function';
+import { translate } from '../translate/index';
 
 /**
  @param {*} x
@@ -26,18 +25,12 @@ export const FunctionPrototype = FUNCTION_PROTO;
  */
 export const FunctionConstructor = ($, parameters, source) => {
 
-  $.Internal = struct.Function({
+  $.Internal = FUNCTION_STRUCT({
 
-    Parameters: parameters || [],
-
-    Name: '',
-
-    // to be parent for a new variable scope in Apply()
-    LexicalScope: currentScope(),
-
-    // to be referred as prototype by each object that newly constructed with this function
-    NewPrototype: { Constructor: $ }
+    Parameters: parameters,
   });
 
-  // translate($.Internal, source);
+  $.Internal.Prototype.Constructor = $;
+
+  translate($.Internal, source);
 };

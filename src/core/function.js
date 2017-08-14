@@ -1,5 +1,5 @@
 import { struct } from './_structs';
-import { Apply } from './context';
+import { Apply, currentScope } from './context';
 import { OBJECT } from './object';
 
 // ----------------------------------------------
@@ -24,7 +24,30 @@ export const FUNCTION_PROTO = OBJECT({
   })
 });
 
+export function FUNCTION_STRUCT(fn) {
+
+  return struct.Function({
+
+    Parameters: fn.Parameters || [],
+
+    Name: fn.Name || '',
+
+    // to be parent for a new variable scope in Apply()
+    LexicalScope: currentScope(),
+
+    // to be referred as prototype by each object that newly constructed with this function
+    Prototype: fn.Prototype || {}
+  });
+
+}
+
 export function FUNCTION(fn) {
 
-  return OBJECT({}, FUNCTION_PROTO, struct.Function(fn));
+  const $ = OBJECT({}, FUNCTION_PROTO, FUNCTION_STRUCT(fn));
+
+  $.Internal.Prototype.Constructor = $;
+
+  // translate($.Internal, source);
+
+  return $;
 }

@@ -1,4 +1,4 @@
-import API from './termins';
+import API from '../core/operations';
 
 const acorn = require("acorn")
 const walk = require("acorn/dist/walk");

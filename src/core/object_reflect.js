@@ -32,7 +32,7 @@ export const REFLECT = {
    */
   construct($, ...args) {
 
-    const $new = OBJECT({}, $.Internal.NewPrototype);
+    const $new = OBJECT({}, $.Internal.Prototype);
 
     Apply($.Internal, $new, args);
 

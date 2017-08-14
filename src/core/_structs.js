@@ -1,8 +1,9 @@
 /**
  * Structures
  */
+import TYPES from './_types';
 
-function define(fields, type) {
+function define(fields, type = TYPES.INTERNAL) {
 
   const keys = Object.keys(fields);
 
@@ -25,12 +26,12 @@ export const struct = {
     Reflect: `Reflect`,
     Extensible: `boolean`,
     Internal: `*`
-  }),
+  }, TYPES.OBJECT),
 
   Array: define({
     Items: `Hash<string, *>`,
     Length: `int`
-  }),
+  }, TYPES.ARRAY),
 
   Reflect: define({
 
@@ -81,7 +82,7 @@ export const struct = {
     // to be parent for a new variable scope in Apply()
     // prototype instance that used to create an object with `new F()`
     LexicalScope: `VariableScope`,
-    NewPrototype: `Object`
+    Prototype: `Object`
   }),
 
   Context: define({
