@@ -1,3 +1,13 @@
+/**
+ * Special numbers constants
+ */
+
+// Non-equal to anything including itself
+export const NOT_A_NUMBER = struct.Primitive(TYPE.NOT_A_NUMBER);
+
+// More then any other number
+export const INFINITY = struct.Primitive(TYPE.INFINITY);
+
 // The initial value of the  prototype property of %Number%
 export const NumberPrototype = {
 

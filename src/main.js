@@ -1,4 +1,4 @@
-import { FUNCTION } from './core/function';
+import { FUNCTION } from './intrinsics/functions';
 import { Apply, InitGlobalContext } from './core/context';
 import CreateGlobalObject from './global';
 import Intrinsics from './intrinsics';

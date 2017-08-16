@@ -1,6 +1,6 @@
 import { FALSE } from './core/_const';
 import { OBJECT } from './core/object';
-import { FUNCTION } from './core/function';
+import { FUNCTION } from './intrinsics/functions';
 
 const ConstructorsNames = [
   'Array ',

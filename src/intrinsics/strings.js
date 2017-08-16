@@ -2,6 +2,10 @@
  * String.
  *
  */
+
+// Empty string
+export const STRING_EMPTY = struct.Primitive(TYPE.STRING_EMPTY, 0);
+
 export const StringPrototype = {
 
   ToString: ($) => $

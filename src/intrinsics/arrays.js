@@ -1,7 +1,7 @@
 import { struct } from '../core/_structs';
 import { FALSE } from '../core/_const';
 import { REFLECT } from '../core/object_reflect';
-import { CALL_METHOD, EQUAL, TO_STRING } from '../core/operations';
+import { CALL_METHOD, EQUAL, TO_STRING } from '../operations/flow';
 
 const ArrayReflect = {
 

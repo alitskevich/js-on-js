@@ -1,14 +1,9 @@
-// ----------------------------------------------
-// Context
-// ----------------------------------------------
-
 import { struct } from './_structs';
 import { UNDEFINED } from './_const';
 
 /**
  * Context
  */
-
 const STACK = [];
 
 export function InitGlobalContext(GlobalObject, Realm) {
@@ -27,14 +22,10 @@ export function InitGlobalContext(GlobalObject, Realm) {
   STACK.unshift(GlobalContext);
 }
 
-export function Return(Result = UNDEFINED, Error = UNDEFINED) {
+export function Return(Error = UNDEFINED, Result = UNDEFINED) {
 
-  Object.assign(STACK[ 0 ], { Result, Error, Index: -1 });
-}
-
-export function Throw(Error, type) {
-
-  Return(UNDEFINED, Error);
+  STACK[ 0 ].Return = struct.ReturnRecord({ Error, Result });
+  STACK[ 0 ].Index = -1;
 }
 
 export function Apply(Fn, This = null, Arguments = []) {
@@ -58,44 +49,41 @@ export function Apply(Fn, This = null, Arguments = []) {
   STACK.shift();
 
   // to provide context.Result outside
-  return context.Result;
+  return context.Return;
 }
 
 /**
  * Variable Scope
  */
 
-export function currentScope() {
+export function lookupVar(name) {
 
-  return STACK[ 0 ].Scope;
-}
-
-function lookupScope(name) {
-
-  for (let scope = currentScope(); scope; scope = scope.Outer) {
+  for (let scope = STACK[ 0 ].Scope; scope; scope = scope.Outer) {
     if (name in scope.Vars) {
-      return scope;
+      return scope.Vars[ name ];
     }
   }
+
+  return UNDEFINED;
 }
 
 // creates and pushes a new Context for given function
 function resolveScope(Fn, Arguments) {
 
   if (Fn.Parameters.length === 0 && Fn.LocalVariables.length === 0) {
-    return currentScope();
+    return STACK[ 0 ].Scope;
   }
 
   const Vars = struct.Hash();
 
   // put parameters into scope
   Fn.Parameters.forEach((name, index) => {
-    Vars[ name ] = Arguments[ index ] || UNDEFINED;
+    Vars[ name ] = { value: Arguments[ index ] || UNDEFINED };
   });
 
   // define all variables BEFORE any execution, e.g. Hoisting
   Fn.LocalVariables.forEach((name, index) => {
-    Vars[ name ] = UNDEFINED;
+    Vars[ name ] = { value: UNDEFINED };
   });
 
   // create a new variable scope on the function lexical scope
@@ -105,29 +93,23 @@ function resolveScope(Fn, Arguments) {
   });
 }
 
-/**
- * Get/Set Variables
- */
+// ----------------------------------------------
+// Function
+// ----------------------------------------------
 
-// GetVar method
-export function GetVar(name) {
+export function FunctionInternal(initials) {
 
-  const scope = lookupScope(name);
-  if (scope) {
-    return scope.Vars[ name ];
-  }
+  return struct.Function({
 
-  Throw(`variable ${name} is not defined`, ReferenceError);
-}
+    Parameters: initials.Parameters || [],
 
-// SetVar method
-export function AssignVar(name, V) {
+    Name: initials.Name || '',
 
-  const scope = lookupScope(name);
-  if (scope) {
-    scope.Vars[ name ] = V;
-    return;
-  }
+    // to be parent for a new variable scope in Apply()
+    LexicalScope: STACK[ 0 ].Scope,
 
-  Throw(`variable ${Id} is not defined`, ReferenceError);
+    // to be referred as prototype by each object that newly constructed with this function
+    Prototype: initials.Prototype || {}
+  });
+
 }

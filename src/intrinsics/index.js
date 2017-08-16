@@ -1,4 +1,4 @@
-import { ORDINARY_OBJECT_REFLECT, REFLECT } from '../core/object_reflect';
+import { REFLECT } from '../core/object_reflect';
 import { MathObject, NumberConstructor, NumberPrototype } from './numbers';
 import { Eval } from './functions';
 

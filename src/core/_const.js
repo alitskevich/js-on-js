@@ -1,7 +1,8 @@
 import TYPE from './_types';
+import { struct } from './_structs';
 
 /**
- * JS introduces quadruple logic:
+ * JS based on quadruple logic:
  * if you choose from duality there are actually four results possible:
  *  yes - certain unambiguous positive choice
  *  no - certain unambiguous negative choice
@@ -11,33 +12,13 @@ import TYPE from './_types';
  */
 
 // UNCERTAIN - ANYTHING POSSIBLE
-export const UNDEFINED = { $$type: TYPE.UNDEFINED };
+export const UNDEFINED = struct.Primitive(TYPE.UNDEFINED, 0);
 
 // CERTAINLY NOTHING
-export const NULL = { $$type: TYPE.NULL };
-
-// Positive dual choice
-export const TRUE = { $$type: TYPE.BOOLEAN_TRUE };
+export const NULL = struct.Primitive(TYPE.NULL, 0);
 
 // Negative dual choice
-export const FALSE = { $$type: TYPE.BOOLEAN_FALSE };
+export const FALSE = struct.Primitive(TYPE.BOOLEAN_FALSE, 0);
 
-/**
- * Special numbers constants
- */
-
-// Non-equal to anything including itself
-export const ZERO = { $$type: TYPE.NUMBER_ZERO, Internal: 0 };
-
-// Non-equal to anything including itself
-export const NOT_A_NUMBER = { $$type: TYPE.NOT_A_NUMBER };
-
-// More then any other number
-export const INFINITY = { $$type: TYPE.INFINITY };
-
-/**
- * Empty string constant
- */
-
-// Empty string
-export const STRING_EMPTY = { $$type: TYPE.STRING_EMPTY, Internal: '' };
+// Positive dual choice
+export const TRUE = struct.Primitive(TYPE.BOOLEAN_TRUE, 1);
