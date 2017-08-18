@@ -1,42 +1,66 @@
 import { struct } from './_structs';
-import { UNDEFINED } from './_const';
+import { NULL, UNDEFINED } from './_const';
 
 /**
  * Context
  */
-const STACK = [];
+const GlobalContext = struct.Context({
 
-export function InitGlobalContext(GlobalObject, Realm) {
+  Scope: struct.VariableScope({}),
 
-  const GlobalContext = struct.Context({
+});
 
-    Scope: struct.VariableScope({ Vars: struct.Hash(GlobalObject) }),
+const STACK = [ GlobalContext ];
 
-    Realm
-  });
+export function InitGlobalContext(Realm) {
 
-  Realm.GlobalObject = GlobalObject;
+  GlobalContext.Realm = Realm;
+
+  GlobalContext.Scope.Vars = struct.Hash(Realm.GlobalObject);
 
   Realm.GlobalContext = GlobalContext;
 
-  STACK.unshift(GlobalContext);
 }
 
-export function Return(Error = UNDEFINED, Result = UNDEFINED) {
+export function MakeInternalFunction(initials) {
 
-  STACK[ 0 ].Return = struct.ReturnRecord({ Error, Result });
-  STACK[ 0 ].Index = -1;
+  return struct.Function({
+
+    // function name
+    Name: initials.Name || '',
+
+    // list of parameters names
+    Parameters: initials.Parameters || [],
+
+    // list of local variables names
+    LocalVariables: initials.LocalVariables || [],
+
+    // list of parameters names
+    Code: initials.Code || (() => {
+      console.error(`No code for ${initials.Name}`)
+    }),
+
+    // list of parameters names
+    BoundToThis: initials.BoundToThis || NULL,
+
+    // to be `Outer` for a new variable scope at Apply()
+    LexicalScope: STACK[ 0 ].Scope,
+
+    // to be `Proto` for each object constructed with this function by `new` operator
+    Prototype: initials.Prototype
+  });
+
 }
 
-export function Apply(Fn, This = null, Arguments = []) {
+export function Apply(InternalFn, This = NULL, Arguments = []) {
 
   // create a new execution context for this invocation
   const context = struct.Context({
     Index: 0,
-    Fn,
-    This: Fn.BoundToThis || This,
+    Fn: InternalFn,
+    This: InternalFn.BoundToThis === NULL ? This : InternalFn.BoundToThis,
     Arguments,
-    Scope: resolveScope(Fn, Arguments),
+    Scope: resolveScope(InternalFn, Arguments),
     Realm: STACK[ 0 ].Realm
   });
 
@@ -44,12 +68,24 @@ export function Apply(Fn, This = null, Arguments = []) {
   STACK.unshift(context);
 
   // Evaluate binary code
-  Fn.Code();
+  InternalFn.Code.apply(This, [ This, ...Arguments ]);
 
   STACK.shift();
 
   // to provide context.Result outside
   return context.Return;
+}
+
+export function Return(Result = UNDEFINED) {
+
+  STACK[ 0 ].Return = struct.ReturnRecord({ Result });
+  STACK[ 0 ].Index = -1;
+}
+
+export function Throw(Error = UNDEFINED) {
+
+  STACK[ 0 ].Return = struct.ReturnRecord({ Error });
+  STACK[ 0 ].Index = -1;
 }
 
 /**
@@ -91,25 +127,4 @@ function resolveScope(Fn, Arguments) {
     Outer: Fn.LexicalScope,
     Vars
   });
-}
-
-// ----------------------------------------------
-// Function
-// ----------------------------------------------
-
-export function FunctionInternal(initials) {
-
-  return struct.Function({
-
-    Parameters: initials.Parameters || [],
-
-    Name: initials.Name || '',
-
-    // to be parent for a new variable scope in Apply()
-    LexicalScope: STACK[ 0 ].Scope,
-
-    // to be referred as prototype by each object that newly constructed with this function
-    Prototype: initials.Prototype || {}
-  });
-
 }

@@ -2,11 +2,21 @@
  * Special numbers constants
  */
 
+import { struct, TYPE } from '../core/_structs';
+import { TYPES } from '../core/_types';
+
 // Non-equal to anything including itself
-export const NOT_A_NUMBER = struct.Primitive(TYPE.NOT_A_NUMBER);
+export const NOT_A_NUMBER = struct.Primitive(TYPES.NOT_A_NUMBER);
 
 // More then any other number
-export const INFINITY = struct.Primitive(TYPE.INFINITY);
+export const INFINITY = struct.Primitive(TYPES.INFINITY);
+
+export const IsNumber = (a) => TYPE($) === TYPES.NUMBER;
+
+export const ToNumber = ($) => {
+
+  return 0 + $;
+};
 
 // The initial value of the  prototype property of %Number%
 export const NumberPrototype = {

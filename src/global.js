@@ -1,6 +1,6 @@
 import { FALSE } from './core/_const';
-import { OBJECT } from './core/object';
-import { FUNCTION } from './intrinsics/functions';
+import { MakeObject } from './core/object';
+import { MakeFunction } from './intrinsics/functions';
 
 const ConstructorsNames = [
   'Array ',
@@ -53,13 +53,13 @@ export default function CreateGlobalObject(Realm) {
   }
 
   function createFunction(Code) {
-    return FUNCTION({ Code })
+    return MakeFunction({ Code })
   }
 
   function createConstructor(Name) {
-    return FUNCTION({
+    return MakeFunction({
       Name,
-      Prototype: OBJECT(Intrinsics[ `${Name}Prototype` ]),
+      Prototype: MakeObject(Intrinsics[ `${Name}Prototype` ]),
       Code: Intrinsics[ `${Name}Constructor` ]
     })
   }
@@ -69,7 +69,7 @@ export default function CreateGlobalObject(Realm) {
     return r;
   }, {});
 
-  return {
+  const GlobalObject = {
 
     // Non-equal to anything including itself
     NaN: createConst(Intrinsics.NaN),
@@ -96,15 +96,19 @@ export default function CreateGlobalObject(Realm) {
     decodeURIComponent: createFunction(Intrinsics.decodeURIComponent),
 
     // Global objects:
-    Atomics: OBJECT(Intrinsics.Atomics),
-    JSON: OBJECT(Intrinsics.JSON),
-    Math: OBJECT(Intrinsics.Math),
-    Reflect: OBJECT(Intrinsics.Reflect),
+    Atomics: MakeObject(Intrinsics.Atomics),
+    JSON: MakeObject(Intrinsics.JSON),
+    Math: MakeObject(Intrinsics.Math),
+    Reflect: MakeObject(Intrinsics.Reflect),
 
     ...Constructors,
 
     ...HostDefined
   }
+
+  Realm.GlobalObject = GlobalObject;
+
+  return GlobalObject;
 
 }
 ;

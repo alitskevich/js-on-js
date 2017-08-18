@@ -1,49 +1,43 @@
-import { struct } from './_structs';
+import { struct, TYPE } from './_structs';
 import { FALSE, TRUE, UNDEFINED, NULL } from './_const';
+import { TYPES } from './_types';
+import { Throw } from './context';
 
-function ValuePropertyGetter($, prop) {
+function valuePropertyGetter($, prop) {
 
   return prop.Value;
 }
 
-function ValuePropertySetter($, Value, prop) {
+function valuePropertySetter($, value, prop) {
 
-  return prop.Value = Value;
+  return prop.Value = value;
 }
 
-function ValueProperty(Value) {
+function createValueProperty(Value) {
 
   return struct.PropertyDescriptor({
     Value,
-    Getter: ValuePropertyGetter,
-    Setter: ValuePropertySetter,
+    Getter: valuePropertyGetter,
+    Setter: valuePropertySetter,
     Writable: TRUE,
     Enumerable: TRUE,
     Configurable: TRUE
   });
 }
 
-function ToProperties(props) {
+function toProperties(props = {}) {
 
   return struct.Hash(Object.keys(props).reduce((r, key) => {
+    const value = props[ key ];
 
-    r[ key ] = ValueProperty(props[ key ]);
+    r[ key ] = TYPE(value) === TYPES.PROPERTY ? value : createValueProperty(value);
 
     return r;
 
   }, {}));
 }
 
-export function DefineProperty($, key, initials) {
-
-  // const $prop = LookupPropertyDescriptor($, Id);
-  // assert($prop.Configurable, `property '${key}' is already defined`);
-  // assert((IsReadOnly === $true) && Get, `No getter allowed for read-only property '${key}'`);
-
-  return $.Props[ key ] = struct.PropertyDescriptor(initials);
-}
-
-function LookupProperty($, key) {
+function lookupProperty($, key) {
 
   // uses Proto chain if has no own property defined
   for (let target = $; target; target = $.Proto) if (key in target.Props) {
@@ -71,11 +65,11 @@ export const PROTO_PROPERTY = struct.PropertyDescriptor({
 /**
  * Object
  */
-export function OBJECT(initials, Proto = ROOT, Internal, Reflect = OBJECT_REFLECT) {
+export function MakeObject(initials, Proto = OBJECT_ROOT, Internal = NULL, Reflect = OBJECT_REFLECT) {
 
-  const Props = ToProperties(initials);
+  const Props = toProperties(initials);
 
-  if (Proto && Proto !== ROOT) {
+  if (Proto && Proto !== OBJECT_ROOT) {
 
     initials.__Proto__ = PROTO_PROPERTY;
   }
@@ -84,54 +78,22 @@ export function OBJECT(initials, Proto = ROOT, Internal, Reflect = OBJECT_REFLEC
 }
 
 /**
- * Reflect is a built-in object that provides methods for interceptable JavaScript operations.
- * The methods are the same as those of proxy handlers.
- * Reflect is not a function object, so it's not constructible.
+ * Reflect is a built-in object that provides methods to interact with objects associated to.
  */
 export const REFLECT = {
 
-  /**
-   *  Calls a target function with arguments as specified by the args parameter.
-   *  See also Function.prototype.apply().
-   * @param Fn
-   * @param This
-   * @param Arguments
-   * @returns {*}
-   */
-  apply($, This, Arguments) {
+  defineProperty($, key, initials) {
 
+    // const $prop = LookupProperty($, Id);
+    // assert($prop.Configurable, `property '${key}' is already defined`);
+    // assert((IsReadOnly === $true) && Get, `No getter allowed for read-only property '${key}'`);
+
+    return $.Props[ key ] = struct.PropertyDescriptor(initials);
   },
 
-  /**
-   * The new operator as a function. Equivalent to calling new target(...args).
-   * @param $
-   * @param args
-   * @returns {*}
-   */
-  construct($, ...args) {
-
-  },
-
-  /**
-   * Similar to Object.defineProperty(). Returns a Boolean.
-   * @param $
-   * @param key
-   * @param prop
-   */
-  defineProperty($, key, prop) {
-
-    $.Props[ key ] = prop
-  },
-
-  /**
-   * The in operator as function. Returns a boolean indicating whether an own or inherited property exists.
-   * @param $
-   * @param key
-   * @returns {boolean}
-   */
   has($, key) {
 
-    return LookupProperty($, key) !== UNDEFINED;
+    return lookupProperty($, key) !== UNDEFINED;
   },
 
   /**
@@ -143,46 +105,22 @@ export const REFLECT = {
 
     return Object.keys($.Props)
   },
-  /**
-   *  Similar to Object.getOwnPropertyDescriptor().
-   *  Returns a property descriptor of the given property if it exists on the object, undefined otherwise.
-   * @param $
-   * @param key
-   * @returns {*}
-   */
+
   getOwnPropertyDescriptor($, key) {
 
     return $.Props[ key ]
   },
-  /**
-   * The delete operator as a function.
-   * Equivalent to calling delete target[name].
-   * @param $
-   * @param key
-   */
+
   deleteProperty($, key) {
 
     delete $.Props
   },
 
-  /**
-   * A function that returns the value of properties.
-   *
-   * The static Reflect.get() method works like getting a property
-   * from an object (target[propertyKey]) as a function.
-   */
   get($, key) {
 
-    const prop = LookupProperty($, key);
+    const prop = lookupProperty($, key);
 
-    if (prop) {
-
-      return prop.Getter($, prop);
-
-      return prop.Value;
-    }
-
-    return UNDEFINED;
+    return prop ? prop.Getter($, prop) : UNDEFINED;
   },
 
   /**
@@ -194,22 +132,19 @@ export const REFLECT = {
    */
   set($, key, value) {
 
-    const prop = LookupProperty($, key);
+    const prop = lookupProperty($, key);
 
     if (prop) {
 
-      // assert(prop.Writable, `property '${key}' is read only`);
+      // assert(prop.Setter, `property '${key}' is read only`);
 
       prop.Setter($, value, prop);
 
     } else {
 
-      $.Props[ key ] = struct.PropertyDescriptor({
-        Value: value,
-        Writable: TRUE,
-        Enumerable: TRUE,
-        Configurable: TRUE
-      });
+      // assert($.Extensible, `property '${key}' is not extensible`);
+
+      $.Props[ key ] = createValueProperty(value);
     }
   },
 
@@ -218,30 +153,16 @@ export const REFLECT = {
     return $.Proto;
   },
 
-  /**
-   *  A function that sets the prototype of an object.
-   * @param $
-   * @param value
-   */
   setPrototypeOf($, value) {
 
     $.Proto = value;
   },
 
-  /**
-   * Same as Object.isExtensible().
-   * @param $
-   * @returns {*}
-   */
   isExtensible($) {
 
     return $.Extensible
   },
 
-  /**
-   *  Similar to Object.preventExtensions(). Returns a Boolean.
-   * @param $
-   */
   preventExtensions($) {
 
     $.Extensible = FALSE;
@@ -252,104 +173,102 @@ const OBJECT_REFLECT = struct.Reflect(REFLECT);
 
 /**
  * This is the default root object for entire object tree.
+ * Contains common methods, available for all descendants
  */
 export const ROOT = {
 
-  // no proto for root!
-  Proto: NULL,
+  // despite root itself has no proto,
+  // `__Proto__` property will be useful for its descendants
+  __Proto__: PROTO_PROPERTY,
 
-  // contains common methods, available for all descendants
-  Props: PROPERTIES({
+  // returns object value
+  ValueOf($) {
 
-    // despite root itself has no proto,
-    // `__Proto__` property will be useful for its descendants
-    __Proto__: PROTO_PROPERTY,
+    return $;
+  },
 
-    // returns underlying primitive structure
-    ValueOf($) {
+  ToString($) {
 
-      return $.Internal;
-    },
+    return `[object ${$.__Proto__.Constructor.Name}]`
+  },
 
-    ToString($) {
+  ToLocaleString($) {
 
-      return `[object ${$.__Proto__.Constructor.Name}]`
-    },
+    return $.Reflect.get($, `ToString`).apply($)
+  },
 
-    ToLocaleString($) {
+  // check if given property is defined by object itself(no prototype chain)
+  HasOwnProperty($, key) {
 
-      return $.Reflect.get($, `ToString`).apply($)
-    },
+    return $.Reflect.has($, key);
+  },
+  // check if given property is enumerable
+  PropertyIsEnumerable($, key) {
 
-    // check if given property id is taken by data hash or meta property descriptor
-    HasOwnProperty($, key) {
+    const prop = lookupProperty($, key);
 
-      return $.Reflect.has($, key);
-    },
+    return prop ? prop.Enumerable : FALSE;
+  },
 
-    PropertyIsEnumerable($, key) {
+  IsPrototypeOf($, X) {
 
-      const prop = LookupProperty($, key);
-
-      return prop ? prop.Enumerable : FALSE;
-    },
-
-    IsPrototypeOf($, X) {
-
-      // uses Proto chain if has no own property defined
-      for (let target = $.Reflect.getPrototypeOf($); target; target = $.Reflect.getPrototypeOf($)) {
-        if (X === target) {
-          return TRUE;
-        }
-      }
-
-      return FALSE;
-    },
-
-    __LookupGetter__($, key) {
-
-      const prop = LookupProperty($, key);
-
-      return prop ? prop.Getter : UNDEFINED;
-    },
-
-    __LookupSetter__($, key) {
-
-      const prop = LookupProperty($, key);
-
-      return prop ? prop.Setter : UNDEFINED;
-    },
-
-    __DefineGetter__($, key, fn) {
-
-      if ($.Reflect.HasOwnProperty($, key)) {
-
-        $.Props[ key ].Getter = fn;
-
-      } else {
-
-        DefineProperty($, key, {
-          Getter: fn,
-          IsEnumerable: TRUE,
-          IsConfigurable: TRUE
-        })
-      }
-    },
-
-    __DefineSetter__($, key, fn) {
-
-      if ($.Reflect.HasOwnProperty($, key)) {
-
-        $.Props[ key ].Setter = fn;
-
-      } else {
-
-        DefineProperty($, key, {
-          Setter: fn,
-          IsEnumerable: TRUE,
-          IsConfigurable: TRUE
-        })
+    // uses Proto chain if has no own property defined
+    for (let target = $.Reflect.getPrototypeOf($); target; target = $.Reflect.getPrototypeOf($)) {
+      if (X === target) {
+        return TRUE;
       }
     }
-  })
+
+    return FALSE;
+  },
+
+  __LookupGetter__($, key) {
+
+    const prop = lookupProperty($, key);
+
+    return prop ? prop.Getter : UNDEFINED;
+  },
+
+  __LookupSetter__($, key) {
+
+    const prop = lookupProperty($, key);
+
+    return prop ? prop.Setter : UNDEFINED;
+  },
+
+  __DefineGetter__($, key, fn) {
+
+    if ($.Reflect.HasOwnProperty($, key)) {
+
+      $.Props[ key ].Getter = fn;
+
+    } else {
+
+      $.Reflect.defineProperty($, key, {
+        Getter: fn,
+        IsEnumerable: TRUE,
+        IsConfigurable: TRUE
+      })
+    }
+  },
+
+  __DefineSetter__($, key, fn) {
+
+    if ($.Reflect.HasOwnProperty($, key)) {
+
+      $.Props[ key ].Setter = fn;
+
+    } else {
+
+      $.Reflect.defineProperty($, key, {
+        Setter: fn,
+        IsEnumerable: TRUE,
+        IsConfigurable: TRUE
+      })
+    }
+  }
 };
+
+export const OBJECT_ROOT = MakeObject(ROOT, /* no proto for root*/ NULL);
+
+

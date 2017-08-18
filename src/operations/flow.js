@@ -1,7 +1,6 @@
-import { NULL, UNDEFINED } from './_const';
-import { Return } from './context';
-import { struct } from './_structs';
-import { IS_FUNCTION, TO_STRING } from './coersion';
+import { UNDEFINED } from '../core/_const';
+import { Return, Throw } from '../core/context';
+import { IsFunction } from '../intrinsics/functions';
 
 export function RETURN(result = UNDEFINED) {
 
@@ -10,14 +9,14 @@ export function RETURN(result = UNDEFINED) {
 
 export function THROW(Error, type = `Error`) {
 
-  Return(UNDEFINED, Error);
+  Throw(Error);
 }
 
 export const APPLY = ($, This, Arguments) => {
 
-  if (!IS_FUNCTION($)) {
+  if (!IsFunction($)) {
 
-    return THROW(`${TO_STRING($)} is not a function`, TypeError);
+    return
   }
 
   return $.Reflect.apply($, This, Arguments);

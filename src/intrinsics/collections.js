@@ -23,7 +23,7 @@ const MAP_PROTO = OBJECT({
 
 });
 
-export const MapConstructor = FUNCTION({
+export const MapConstructor = MakeFunction({
 
   Name: STRING('Map'),
 

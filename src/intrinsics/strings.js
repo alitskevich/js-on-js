@@ -2,9 +2,16 @@
  * String.
  *
  */
+import { TYPES } from '../core/_types';
+import { struct } from '../core/_structs';
 
 // Empty string
-export const STRING_EMPTY = struct.Primitive(TYPE.STRING_EMPTY, 0);
+export const STRING_EMPTY = struct.Primitive(TYPES.STRING, 0);
+
+export const ToString = ($) => {
+
+  return '' + $;
+};
 
 export const StringPrototype = {
 
@@ -14,7 +21,7 @@ export const StringPrototype = {
 
 export const StringConstructor = ($, chars) => {
 
-  $.Internal = (chars);
+  $.Internal = struct.Primitive(TYPES.STRING, chars);
 };
 
 /**

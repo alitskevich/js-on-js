@@ -1,6 +1,5 @@
 import { NULL, UNDEFINED } from '../core/_const';
 import { APPLY, THROW } from './flow';
-import { TO_OBJECT, TO_STRING } from './coersion';
 
 export const GET = ($, key) => {
 

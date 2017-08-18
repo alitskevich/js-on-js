@@ -1,11 +1,13 @@
+import { FALSE, TRUE } from '../core/_const';
+
 export const BooleanPrototype = {
 
   ValueOf: ($) => $.Internal,
 
-  ToString: ($) => OBJECT_PRIMITIVE($) === TRUE ? 'true' : 'false'
+  ToString: ($) => $.Internal === TRUE ? 'true' : 'false'
 };
 
 export const BooleanConstructor = ($, V) => {
 
-  $.Internal = TRULY(V) ? TRUE : FALSE;
+  $.Internal = TRUTHY(V) ? TRUE : FALSE;
 };

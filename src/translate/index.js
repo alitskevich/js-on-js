@@ -1,4 +1,5 @@
-import API from '../operations/flow';
+import { FUNCTION } from '../operations/instantiation';
+import { ASSIGN_VAR } from '../operations/variables';
 
 const acorn = require("acorn")
 const walk = require("acorn/dist/walk");
@@ -27,14 +28,13 @@ export function parse(Source) {
  * @param Fn
  * @returns {*}
  */
-export function translate(Source, Fn) {
+export function translate(Fn, Source) {
 
   var LocalVariables = [];
   let Parameters = [];
   let Statements = [];
 
   var ast = parse(Source);
-
 
   walk.recursive(ast, {}, {
     VariableDeclarator(n) {
@@ -44,11 +44,11 @@ export function translate(Source, Fn) {
     FunctionDeclaration(n, state, c) {
       const name = n.id.name;
       LocalVariables.push(name);
-      const fn = API.FUNCTION({
+      const fn = FUNCTION({
         Name: name
       });
-      translate(n.body, fn.Internal);
-      Statements.push(() => API.ASSIGN_VAR(name, fn));
+      translate(fn.Internal, n.body);
+      Statements.push(() => ASSIGN_VAR(name, fn));
       c(n.body, state);
     },
     AssignmentExpression(n, state, c) {

@@ -20,7 +20,7 @@ export const struct = {
 
   Hash: initials => Object.assign(Object.create(null), initials),
 
-  Primitive: (type, value) => Object.assign(Object.create(null), { $$type: type, $$value: value }),
+  Primitive: (type, value) => Object.assign(Object.create(null), { $$type: type, Value: value }),
 
   Object: define({
     Props: `Hash<string, PropertyDescriptor>`,
@@ -31,7 +31,7 @@ export const struct = {
   }, TYPES.OBJECT),
 
   Array: define({
-    Items: `Hash<string, *>`,
+    Items: `Hash<int, *>`,
     Length: `int`
   }, TYPES.ARRAY),
 
@@ -87,17 +87,24 @@ export const struct = {
     Configurable: `boolean`
   }),
 
+  Error: define({
+    // execution flow
+    Message: `string`,
+    Stack: `*`,
+    Position: `*`,
+  }),
+
   ReturnRecord: define({
     // execution flow
     Result: `*`,
-    Mode: `string`,
+    Error: `Error`,
   }),
 
   Context: define({
+
     // execution flow
     Return: `ReturnRecord`,
     Index: `int`,
-
     Fn: `Function`,
 
     // state

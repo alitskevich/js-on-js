@@ -1,8 +1,10 @@
-import { FUNCTION } from './intrinsics/functions';
+import { FunctionConstructor, MakeFunction } from './intrinsics/functions';
 import { Apply, InitGlobalContext } from './core/context';
 import CreateGlobalObject from './global';
 import Intrinsics from './intrinsics';
 import { CreateRealm } from './realm';
+import { APPLY } from './operations/flow';
+import { NEW } from './operations/instantiation';
 
 /**
  *
@@ -14,9 +16,9 @@ export function main(Source, Params, HostDefined) {
 
   const GlobalObject = CreateGlobalObject(Realm);
 
-  InitGlobalContext(GlobalObject, Realm);
+  InitGlobalContext(Realm);
 
-  const Fn = FUNCTION({ Source });
+  const Fn = NEW(GlobalObject.Function, [], Source);
 
-  return Apply(Fn, Params);
+  return APPLY(Fn, GlobalObject, Params);
 }
