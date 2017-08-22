@@ -30,6 +30,7 @@ export const TYPES = {
   FUNCTION: 14,
 
   // internal
-  PROPERTY: 15
+  PROPERTY: 15,
+  INTERNAL: 16
 
 };

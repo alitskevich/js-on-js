@@ -2,7 +2,7 @@ import { struct } from './_structs';
 import { TYPES } from './_types';
 
 /**
- * JS supports a `full-set` logic:
+ * JS supports like a`full-set` logic:
  * if you choose from duality there are actually four results possible:
  *
  *  yes - certain unambiguous positive choice

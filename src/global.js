@@ -104,7 +104,7 @@ export default function CreateGlobalObject(Realm) {
     ...Constructors,
 
     ...HostDefined
-  }
+  };
 
   Realm.GlobalObject = GlobalObject;
 

@@ -16,7 +16,13 @@ export function InitGlobalContext(Realm) {
 
   GlobalContext.Realm = Realm;
 
-  GlobalContext.Scope.Vars = struct.Hash(Realm.GlobalObject);
+  const globalVars = Realm.GlobalObject;
+
+  GlobalContext.Scope.Vars = Object.keys(globalVars).reduce((hash, key) => {
+
+    hash[ key ] = { value: globalVars[ key ] };
+    return hash;
+  }, struct.Hash());
 
   Realm.GlobalContext = GlobalContext;
 

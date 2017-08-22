@@ -4,9 +4,8 @@ import { Eval, FunctionConstructor, FunctionPrototype } from './functions';
 import { ObjectConstructor, ObjectPrototype } from './objects';
 
 /**
- * intrinsics are built-in low-level code routines.
- * They are part of Realm.
- * And many of them are wrapped into objects and become properties of Global object
+ * Intrinsics are built-in low-level code routines.
+ * Most of them are used to construct properties of Global object
  */
 
 export default {
@@ -62,6 +61,8 @@ export default {
   // ArrayProto_values,
   // // 		The prototype of Array iterator objects (22.1.5)
   // ArrayIteratorPrototype,
+  // // 		An object that all standard built-in iterator objects indirectly inherit from
+  // IteratorPrototype,
 
   // 	Function	The Function constructor (19.2.1)
   FunctionConstructor,
@@ -79,12 +80,37 @@ export default {
   // AsyncFunction,
   // // 		The initial value of the  prototype data property of %AsyncFunction%
   // AsyncFunctionPrototype,
+
+  // // 	Boolean	The Boolean constructor (19.3.1)
+  // BooleanConstructor,
+  // // 	Boolean.prototype	The initial value of the  prototype data property of %Boolean% (19.3.3)
+  // BooleanPrototype,
   //
-  // // 		An object that all standard built-in iterator objects indirectly inherit from
-  // IteratorPrototype,
+  // // 	Date	The Date constructor (20.3.2)
+  // DateConstructor,
+  // // 	Date.prototype	The initial value of the  prototype data property of %Date%.
+  // DatePrototype,
   //
-  // // 	JSON	The JSON object (24.5)
-  // JSON,
+  NumberConstructor, NumberPrototype,
+
+  // // 	String	The String constructor (21.1.1)
+  // StringConstructor,
+  // // 		The prototype of String iterator objects (21.1.5)
+  // StringIteratorPrototype,
+  // // 	String.prototype	The initial value of the  prototype data property of %String%
+  // StringPrototype,
+  //
+  // // 	RegExp	The RegExp constructor (21.2.3)
+  // RegExpConstructor,
+  // // 	RegExp.prototype	The initial value of the  prototype data property of %RegExp%
+  // RegExpPrototype,
+  //
+  // // 	Symbol	The Symbol constructor (19.4.1)
+  // SymbolConstructor,
+  // // 	Symbol.prototype	The initial value of the  prototype data property of %Symbol%. (19.4.3)
+  // SymbolPrototype,
+
+  //
   //
   // // 	Map	The Map constructor (23.1.1)
   // MapConstructor,
@@ -109,36 +135,10 @@ export default {
   //
   // // 	Math	The MathObject
   // Math,
+  // // 	JSON	The JSON object (24.5)
+  // JSON,
   //
-  // // 	Boolean	The Boolean constructor (19.3.1)
-  // BooleanConstructor,
-  // // 	Boolean.prototype	The initial value of the  prototype data property of %Boolean% (19.3.3)
-  // BooleanPrototype,
-  //
-  // // 	Date	The Date constructor (20.3.2)
-  // DateConstructor,
-  // // 	Date.prototype	The initial value of the  prototype data property of %Date%.
-  // DatePrototype,
-  //
-  NumberConstructor, NumberPrototype,
-  //
-  // // 	String	The String constructor (21.1.1)
-  // StringConstructor,
-  // // 		The prototype of String iterator objects (21.1.5)
-  // StringIteratorPrototype,
-  // // 	String.prototype	The initial value of the  prototype data property of %String%
-  // StringPrototype,
-  //
-  // // 	RegExp	The RegExp constructor (21.2.3)
-  // RegExpConstructor,
-  // // 	RegExp.prototype	The initial value of the  prototype data property of %RegExp%
-  // RegExpPrototype,
-  //
-  // // 	Symbol	The Symbol constructor (19.4.1)
-  // SymbolConstructor,
-  // // 	Symbol.prototype	The initial value of the  prototype data property of %Symbol%. (19.4.3)
-  // SymbolPrototype,
-  //
+
   // // 	Error	The Error constructor (19.5.1)
   // ErrorConstructor,
   // // 	Error.prototype	The initial value of the  prototype data property of %Error%
@@ -169,7 +169,7 @@ export default {
   // ReferenceErrorConstructor,
   // // 	ReferenceError.prototype	The initial value of the  prototype property of %ReferenceError%
   // ReferenceErrorPrototype,
-  //
+
   // // 	ArrayBuffer	The ArrayBuffer constructor (24.1.2)
   // ArrayBufferConstructor,
   // // 	ArrayBuffer.prototype	The initial value of the  prototype data property of %ArrayBuffer%.

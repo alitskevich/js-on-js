@@ -74,7 +74,7 @@ export function MakeObject(initials, Proto = OBJECT_ROOT, Internal = NULL, Refle
     initials.__Proto__ = PROTO_PROPERTY;
   }
 
-  return struct.Object({ Props, Proto, Reflect, Internal });
+  return struct.Object({ Props, Proto, Reflect, Internal, Extensible: TRUE });
 }
 
 /**
@@ -86,7 +86,7 @@ export const REFLECT = {
 
     // const $prop = LookupProperty($, Id);
     // assert($prop.Configurable, `property '${key}' is already defined`);
-    // assert((IsReadOnly === $true) && Get, `No getter allowed for read-only property '${key}'`);
+    // assert(!prop.Writable && Get, `No getter allowed for read-only property '${key}'`);
 
     return $.Props[ key ] = struct.PropertyDescriptor(initials);
   },
@@ -172,8 +172,7 @@ export const REFLECT = {
 const OBJECT_REFLECT = struct.Reflect(REFLECT);
 
 /**
- * This is the default root object for entire object tree.
- * Contains common methods, available for all descendants
+ * This is initials for root object.
  */
 export const ROOT = {
 
@@ -269,6 +268,11 @@ export const ROOT = {
   }
 };
 
+/**
+ * This is the default root object for entire object tree.
+ * Has no proto.
+ * Also provides set of common methods, available for all descendants.
+ */
 export const OBJECT_ROOT = MakeObject(ROOT, /* no proto for root*/ NULL);
 
 
