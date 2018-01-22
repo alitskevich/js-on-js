@@ -3,7 +3,7 @@ import { MakeObject } from './core/object';
 import { MakeFunction } from './intrinsics/functions';
 
 const ConstructorsNames = [
-  'Array ',
+  'Array',
   'ArrayBuffer',
   'Boolean',
   'DataView',
@@ -77,7 +77,7 @@ export default function CreateGlobalObject(Realm) {
     Infinity: createConst(Intrinsics.Infinity),
     // Undefined
     undefined: createConst(Intrinsics.UNDEFINED),
-    // Undefined
+    // null
     ['null']: createConst(Intrinsics.NULL),
 
     // Global functions:
@@ -89,8 +89,8 @@ export default function CreateGlobalObject(Realm) {
     parseFloat: createFunction(Intrinsics.parseFloat),
     parseInt: createFunction(Intrinsics.parseInt),
 
-    encode: createFunction(Intrinsics.encode),
-    decode: createFunction(Intrinsics.decode),
+    encode: createFunction(Intrinsics.encodeURI),
+    decode: createFunction(Intrinsics.decodeURI),
 
     encodeURIComponent: createFunction(Intrinsics.encodeURIComponent),
     decodeURIComponent: createFunction(Intrinsics.decodeURIComponent),

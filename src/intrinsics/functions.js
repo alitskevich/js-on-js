@@ -64,7 +64,7 @@ export const FunctionConstructor = ($, Parameters, Source) => {
 export const FunctionPrototype = {
 
   Length: struct.PropertyDescriptor({
-    Get: ($) => $.Internal.Parameters.length
+    Getter: ($) => $.Internal.Parameters.length
   }),
 
   Apply: ($, This, Arguments) => Apply($.Internal, This, Arguments),
@@ -86,7 +86,7 @@ export function MakeFunction(initials) {
 
   $.Reflect = FUNCTION_REFLECT;
 
-  $.Internal = MakeInternalFunction({ ...initials, Prototype: MakeObject({ Constructor: $ }) });
+  $.Internal = MakeInternalFunction({ Prototype: MakeObject({ Constructor: $ }), ...initials });
 
   return $;
 }

@@ -2,6 +2,10 @@ import { REFLECT } from '../core/object';
 import { MathObject, NumberConstructor, NumberPrototype } from './numbers';
 import { Eval, FunctionConstructor, FunctionPrototype } from './functions';
 import { ObjectConstructor, ObjectPrototype } from './objects';
+import { ArrayConstructor, ArrayPrototype } from './array';
+import { BooleanConstructor, BooleanPrototype } from './boolean';
+import { StringConstructor, StringPrototype } from './strings';
+import JSON from './JSON';
 
 /**
  * Intrinsics are built-in low-level code routines.
@@ -54,9 +58,9 @@ export default {
   // ObjProto_valueOf,
   //
   // // 	Array	The Array constructor (22.1.1)
-  // ArrayConstructor,
+  ArrayConstructor,
   // // 	Array.prototype	The initial value of the  prototype data property of %Array% (22.1.3)
-  // ArrayPrototype,
+  ArrayPrototype,
   // // 	Array.prototype.values	The initial value of the  values data property of %ArrayPrototype% (22.1.3.30)
   // ArrayProto_values,
   // // 		The prototype of Array iterator objects (22.1.5)
@@ -82,9 +86,9 @@ export default {
   // AsyncFunctionPrototype,
 
   // // 	Boolean	The Boolean constructor (19.3.1)
-  // BooleanConstructor,
+  BooleanConstructor,
   // // 	Boolean.prototype	The initial value of the  prototype data property of %Boolean% (19.3.3)
-  // BooleanPrototype,
+  BooleanPrototype,
   //
   // // 	Date	The Date constructor (20.3.2)
   // DateConstructor,
@@ -94,11 +98,11 @@ export default {
   NumberConstructor, NumberPrototype,
 
   // // 	String	The String constructor (21.1.1)
-  // StringConstructor,
+  StringConstructor,
   // // 		The prototype of String iterator objects (21.1.5)
   // StringIteratorPrototype,
   // // 	String.prototype	The initial value of the  prototype data property of %String%
-  // StringPrototype,
+  StringPrototype,
   //
   // // 	RegExp	The RegExp constructor (21.2.3)
   // RegExpConstructor,
@@ -134,9 +138,9 @@ export default {
   // WeakSetPrototype,
   //
   // // 	Math	The MathObject
-  // Math,
+  Math: MathObject,
   // // 	JSON	The JSON object (24.5)
-  // JSON,
+  JSON,
   //
 
   // // 	Error	The Error constructor (19.5.1)

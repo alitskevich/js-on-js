@@ -7,9 +7,7 @@ const ArrayReflect = {
 
   ...REFLECT,
 
-  get($, key, value) {
-
-    const length = REFLECT.get($, 'Length');
+  get($, key) {
 
     if (IS_NUMBER(key)) {
       REFLECT.get($.Internal.Items, key + 1);
@@ -25,7 +23,7 @@ const ArrayReflect = {
       if (key >= length) {
         REFLECT.set($, 'Length', key + 1);
       }
-      REFLECT.set($.Internal.Items, value);
+      REFLECT.set($.Internal.Items, key, value);
 
     }
     REFLECT.set($, key, value);
@@ -57,8 +55,8 @@ export const ArrayConstructor = ($, args) => {
 export const ArrayPrototype = {
 
   $Length: struct.PropertyDescriptor({
-    Get: ($) => $.Internal,
-    Set: ($, value) => {
+    Getter: ($) => $.Internal,
+    Setter: ($, value) => {
       $.Internal = value
     },
     Enumerable: FALSE,
@@ -72,7 +70,7 @@ export const ArrayPrototype = {
 
     for (let index = 0; index < size; index++) {
 
-      const item = $R.get(index);
+      const item = $R.get($, index);
 
       fn.Reflect.apply(fn, item, index, $);
     }

@@ -66,13 +66,12 @@ export const PROTO_PROPERTY = struct.PropertyDescriptor({
  * Object
  */
 export function MakeObject(initials, Proto = OBJECT_ROOT, Internal = NULL, Reflect = OBJECT_REFLECT) {
-
-  const Props = toProperties(initials);
-
   if (Proto && Proto !== OBJECT_ROOT) {
 
     initials.__Proto__ = PROTO_PROPERTY;
   }
+
+    const Props = toProperties(initials);
 
   return struct.Object({ Props, Proto, Reflect, Internal, Extensible: TRUE });
 }
@@ -113,7 +112,7 @@ export const REFLECT = {
 
   deleteProperty($, key) {
 
-    delete $.Props
+    delete $.Props[ key ]
   },
 
   get($, key) {
@@ -212,7 +211,7 @@ export const ROOT = {
   IsPrototypeOf($, X) {
 
     // uses Proto chain if has no own property defined
-    for (let target = $.Reflect.getPrototypeOf($); target; target = $.Reflect.getPrototypeOf($)) {
+    for (let target = $.Reflect.getPrototypeOf($); target; target = target.Reflect.getPrototypeOf($)) {
       if (X === target) {
         return TRUE;
       }
